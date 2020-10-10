@@ -101,7 +101,7 @@ var balanceSchema = new Schema({
   
   mvalue: {
     type: Number
-},cvalue: {
+},dvalue: {
     type: Number
 }
 });
@@ -132,10 +132,25 @@ app.post("/intializeData",async function(req,res){
   await dmodel.deleteMany({});
   await bmodel.deleteMany({});
   const init= {name:"Bank/Cash at Bank",accNo:101,value:1000000}
+  const initl= {name:"Bank/Cash at Bank",accNo:101,value:1000000}
+  const initb= {accNo:101,mvalue:1000000,dvalue:0}
+
   var as = new asmodel(init)
-    as.save(function (err) {
+    as.save(function (err,d) {
     if (err) console(err);
-    // saved!
+   else console.log(d)
+});
+var al = new limodel(initl)
+al.save(function (err,d) {
+if (err) console(err);
+else console.log(d)
+// saved!
+});
+var ab = new bmodel(initb)
+ab.save(function (err,d) {
+if (err) console(err);
+else console.log(d)
+// saved!
 });
 })
 app.post("/savedata",function(req,res){ 
@@ -240,14 +255,14 @@ lm.save(function (err) {
   
   }else if(dacc==null)
   {
-     console.log('Credit Asset Account doesnt exist in Database ');
+     console.log('Credit Asset Account doesnt exist in Database ',da.name);
   }
   
   else if(err){
           console.log(err)
         }
   });        
-  mup= bmodel.findOne({accNo: da.accNo}, function(err, bacc) {
+  mup= bmodel.findOne({accNo: ma.accNo}, function(err, bacc) { //finding credit account in balancesheet 
 if(bacc) {console.log("Found!");
 bmodel.updateOne({'accNo': ma.accNo},{$inc: { mvalue: ma.value},}, function (err, docs) { //Update balancesheet
   if (err){ 
@@ -271,7 +286,7 @@ bb.save(function (err) {
 
   });
   
-  dup= bmodel.findOne({accNo: ma.accNo}, function(err, dacc) {
+  dup= bmodel.findOne({accNo: da.accNo}, function(err, dacc) {
     if(dacc  && dacc.mvalue>=da.value+dacc.dvalue) {console.log("can be added!")
           
 
@@ -962,7 +977,7 @@ app.get("/getTrailBalance",function(req,res){
             _id:'$accNo',
             mvalue:'$mvalue',
             cvalue:"$dvalue",
-            res:"$mvalue"-"$cvalue"
+          
 
           },
           
