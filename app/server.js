@@ -5,7 +5,7 @@ var app = express();
 let mongoose = require('mongoose');
 let cors = require('cors');
 let bodyParser = require('body-parser');
-let dbConfig = require('./database/db');
+let dbConfig = require('../database/db');
 const { LegendPosition } = require('ag-grid-community');
 
 // Express Route
