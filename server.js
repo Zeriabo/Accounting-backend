@@ -8,7 +8,7 @@ let bodyParser = require('body-parser');
 let dbConfig = require('./database/db');
 const { exit } = require('process');
 
-
+app.use(cors());
 // Express Route
 function search(nameKey, myArray){
   for (var i=0; i < myArray.length; i++) {
@@ -1015,4 +1015,3 @@ app.use(function (err, req, res, next) {
   res.status(err.statusCode).send(err.message);
 });
 
-app.use(cors());
