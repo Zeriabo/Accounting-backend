@@ -941,6 +941,7 @@ app.get("/getTrailBalance",async function(req,res){
                 res.status(500).send()
             }else if(book.length==0)
                     {
+                      
                        console.log("book length is Zero")
                         var responseObject = undefined;
                         res.status(404).send(responseObject)
