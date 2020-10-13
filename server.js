@@ -6,7 +6,6 @@ let mongoose = require('mongoose');
 let cors = require('cors');
 let bodyParser = require('body-parser');
 let dbConfig = require('./database/db');
-const { exit } = require('process');
 
 
 // Express Route
@@ -133,7 +132,7 @@ app.post("/intializeData",async function(req,res){
   await dmodel.deleteMany({});
   await bmodel.deleteMany({});
   const init= {name:"Bank/Cash at Bank",accNo:101,value:1000000}
-
+  const initl= {name:"Bank/Cash at Bank",accNo:101,value:1000000}
   const initb= {accNo:101,mvalue:1000000,dvalue:0}
 
   var as = new asmodel(init)
@@ -141,7 +140,12 @@ app.post("/intializeData",async function(req,res){
     if (err) console(err);
    else console.log(d)
 });
-
+var al = new limodel(initl)
+al.save(function (err,d) {
+if (err) console(err);
+else console.log(d)
+// saved!
+});
 var ab = new bmodel(initb)
 ab.save(function (err,d) {
 if (err) console(err);
@@ -151,10 +155,10 @@ else console.log(d)
 })
 app.post("/savedata",function(req,res){ 
    
-    
+    var find =false;
     var doc1 = { credit: req.body.credit,debit:req.body.debit ,caccNo:req.body.cAccNo,daccNo: req.body.dAccNo,dvalue:req.body.dvalue,cvalue:req.body.cvalue };
 
-    //Need to insert to the leger for the Trail balance sheet!!!!!
+    //console.log("doc:",doc1)
 const DD="Debit"; CC="Credit";
  const ma = {};
  const da = {};
@@ -179,7 +183,7 @@ const DD="Debit"; CC="Credit";
  ba.daccNo=doc1.caccNo;
  ba.mvalue=doc1.dvalue;
  ba.dvalue=doc1.cvalue;
- var assetinsert,assetupdate,liabilityinsert,liabilityupdate,assetdecrement;
+ var assetinsert,assetupdate,liabilityinsert,liabilityupdate,assetdecrement,balancesheet;
 
  // Asset insert and updates are correct credit and debit and ledger Okay Balancesheet find and update not found insert (for each)
 
@@ -192,13 +196,13 @@ const DD="Debit"; CC="Credit";
 
    assetupdate=   asmodel.findOne({accNo: da.accNo}, function(err, dacc) {
    
-    if(dacc.length >0) { 
+    if(dacc!== null) { 
       asmodel.updateOne({'accNo': { $in: [da.accNo]}},{$inc: { value: -da.value},}, function (err, docs) { //Update Assets
         if (err){ 
             console.log(err) 
         } 
         else{ 
-            console.log("Decrement of Assets Account: ", da.name); 
+            console.log("Updated Docs of credit : ", docs); 
         } 
       
       });  
@@ -215,7 +219,7 @@ const DD="Debit"; CC="Credit";
           });
          
           
-      }else if(macc.length==0)
+      }else if(!macc)
       {
         var as = new asmodel(ma)
          assetinsert=   as.save(function (err) {
@@ -258,20 +262,18 @@ lm.save(function (err) {
           console.log(err)
         }
   });        
-  mup= bmodel.findOne({accNo: ma.accNo}, function(err, bacc) {  
-if(bacc) {
+  mup= bmodel.findOne({accNo: ma.accNo}, function(err, bacc) { //finding credit account in balancesheet 
+if(bacc) {console.log("Found!");
 bmodel.updateOne({'accNo': ma.accNo},{$inc: { mvalue: ma.value},}, function (err, docs) { //Update balancesheet
   if (err){ 
       console.log(err) 
   } 
   else{ 
-      console.log("Updated Docs of debit balancesheet : ", docs,ma.accNo);
-      bacc.send({express: 'The Debit account has been Updated!'} ); 
+      console.log("Updated Docs of debit balancesheet : ", docs,ma.accNo); 
   } 
 
 });
-}else if(!bacc){ 
-  bal.accNo=ma.accNo;
+}else if(!bacc){  bal.accNo=ma.accNo;
   bal.accName=ma.accName;
   bal.mvalue=ma.value;
   bal.dvalue= 0;
@@ -285,7 +287,7 @@ bb.save(function (err) {
   });
   
   dup= bmodel.findOne({accNo: da.accNo}, function(err, dacc) {
-    if(dacc  && dacc.mvalue>=da.value+dacc.dvalue) {
+    if(dacc  && dacc.mvalue>=da.value+dacc.dvalue) {console.log("can be added!")
           
 
     bmodel.updateOne({'accNo':da.accNo},{$inc: { dvalue: da.value},}, function (err, docs) { //Update balancesheeet
@@ -294,20 +296,25 @@ bb.save(function (err) {
       } 
       else{ 
           console.log("Updated Docs of balanceshheet credit : ", docs); 
-          dacc.send({express: 'The Credit account has been Updated!'} );
       } 
     
     });  
 
 
 
-  }else if(!dacc){  console.log("Transaction can't be Completed!") 
-
+  }else if(!dacc){ bal.accNo=da.accNo;
+    bal.accName=da.accName;
+    bal.mvalue=0;
+    bal.dvalue= da.value;
+    var bb= new bmodel(bal)
+  bb.save(function (err) {
+   if (err) console(err);
+   else console.log("Saved!")
    // saved!
-  }else if(dacc.mvalue+ma.value<da.value+dacc.dvalue)
+  });}else if(dacc.mvalue+ma.value<da.value+dacc.dvalue)
   {
   
-    bmodel.updateOne({'accNo': ma.accNo},{$inc: { dvalue: -ma.value},}, function (err, docs) { //Update balancesheet
+    bmodel.updateOne({'accNo': ma.accNo},{$inc: { mvalue: -ma.value},}, function (err, docs) { //Update balancesheet
       if (err){ 
           console.log(err) 
       } 
@@ -933,7 +940,7 @@ re.save(function(err,result){
 
 });
     
-app.get("/getTrailBalance",async function(req,res){
+app.get("/getTrailBalance",function(req,res){
       
     
         lemodel.find({}, (err, book) => {
@@ -941,7 +948,7 @@ app.get("/getTrailBalance",async function(req,res){
                 res.status(500).send()
             }else if(book.length==0)
                     {
-                       console.log("book length is Zero")
+                       
                         var responseObject = undefined;
                         res.status(404).send(responseObject)
                     } else if(book.length>0) {
@@ -1014,4 +1021,4 @@ app.use(function (err, req, res, next) {
   res.status(err.statusCode).send(err.message);
 });
 
-app.use(cors());
+ 
