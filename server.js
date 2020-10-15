@@ -188,17 +188,35 @@ const DD="Debit"; CC="Credit";
  && ([101,102,108,110,112,116,130,157,158].includes(doc1.caccNo)   ))
  
  {
-   
+       
+  var dm =new dmodel(ma);
+  var cm = new cmodel(da);
+ 
+  var lm = new lemodel(ba);
+
+cm.save(function (err) {
+  if (err) console(err);
+  // saved!
+});
+dm.save(function (err) {
+if (err) console(err);
+// saved!
+});
+lm.save(function (err) {
+if (err) console(err);
+// saved!
+});
 
    assetupdate=   asmodel.findOne({accNo: da.accNo}, function(err, dacc) {
-   
+   if(dacc!=null){
     if(dacc.length >0) { 
-      asmodel.updateOne({'accNo': { $in: [da.accNo]}},{$inc: { value: -da.value},}, function (err, docs) { //Update Assets
+      asmodel.updateOne({'accNo': { $in: [da.accNo]}},{$inc: { value: -da.value},}, function (err, res) { //Update Assets
         if (err){ 
             console.log(err) 
         } 
         else{ 
-            console.log("Decrement of Assets Account: ", da.name); 
+            console.log("Decrement of Assets Account: ", da.name);
+           res.send("Assets has been Updated")
         } 
       
       });  
@@ -206,10 +224,12 @@ const DD="Debit"; CC="Credit";
         if( macc) {
       asmodel.updateOne({'accNo': { $in: [ma.accNo]}},{$inc: { value: ma.value},}, function (err, docs) { //update Assets
             if (err){ 
-                console.log(err) 
+               res.send(err)
             } 
             else{ 
-                console.log("Updated Docs of debit : ", docs); 
+                console.log("Updated Docs of debit : ", docs);
+                res.setHeader('Content-Type', 'application/json'); 
+                res.status(200).json({docs:'Assets has been Updated'})
             } 
           
           });
@@ -218,8 +238,9 @@ const DD="Debit"; CC="Credit";
       }else if(macc.length==0)
       {
         var as = new asmodel(ma)
-         assetinsert=   as.save(function (err) {
+         assetinsert=   as.save(function (err,res) {
           if (err) console(err);
+          else res.send("Assets has been Updated")
           // saved!
       });
       }
@@ -227,27 +248,8 @@ const DD="Debit"; CC="Credit";
               console.log(err)
             }
       });
-     
-    if(assetinsert || assetupdate){
-     
-    var dm =new dmodel(ma);
-    var cm = new cmodel(da);
-   
-    var lm = new lemodel(ba);
 
-  cm.save(function (err) {
-    if (err) console(err);
-    // saved!
-});
-dm.save(function (err) {
-  if (err) console(err);
-  // saved!
-});
-lm.save(function (err) {
-  if (err) console(err);
-  // saved!
-});
-    } 
+    }
   
   }else if(dacc==null)
   {
@@ -266,7 +268,7 @@ bmodel.updateOne({'accNo': ma.accNo},{$inc: { mvalue: ma.value},}, function (err
   } 
   else{ 
       console.log("Updated Docs of debit balancesheet : ", docs,ma.accNo);
-      bacc.send({express: 'The Debit account has been Updated!'} ); 
+      
   } 
 
 });
@@ -294,7 +296,7 @@ bb.save(function (err) {
       } 
       else{ 
           console.log("Updated Docs of balanceshheet credit : ", docs); 
-          dacc.send({express: 'The Credit account has been Updated!'} );
+         
       } 
     
     });  
@@ -332,7 +334,24 @@ else  if(( [101,102,108,110,112,116,130,157,158].includes(doc1.daccNo )
  
  &&  [200,201,209,230,231,300,311,320,330,332,350,360].includes(doc1.caccNo)   ))
 
- { 
+ {  // we need to add the asset if not existed or update it and same for the liability or shareholder 
+   var dm =new dmodel(ma);
+  var cm = new cmodel(da);
+ 
+  var lm = new lemodel(ba);
+
+cm.save(function (err) {
+  if (err) console(err);
+  // saved!
+});
+dm.save(function (err) {
+if (err) console(err);
+// saved!
+});
+lm.save(function (err) {
+if (err) console(err);
+// saved!
+});
    asmodel.findOne({accNo: ma.accNo}, function(err, acc) {
     if(err){
       console.log(err)
@@ -356,14 +375,12 @@ asmodel.updateOne({'accNo': { $in: [ma.accNo]}},{$inc: { value: ma.value},}, fun
     // saved!
 });
 }
-else if(err){
-        console.log(err)
-      }
+
 });
    if([200,201,209,230,231].includes(doc1.caccNo))
    {//find acc in liabilities if found increment else add
     
-     liabilityupdate= limodel.findOne({accNo:da.accNo}, function(err,acc){
+      limodel.findOne({accNo:da.accNo}, function(err,acc){
       if(err){console.log(err)}
       else if(acc!=null)
       {
@@ -387,34 +404,14 @@ else if(err){
     
     
     
-    
-    if(liabilityinsert || liabilityupdate){
-     
-      var dm =new dmodel(ma);
-      var cm = new cmodel(da);
-     
-      var lm = new lemodel(ba);
-    
-    cm.save(function (err) {
-      if (err) console.log(err);
-      // saved!
-  });
-  dm.save(function (err) {
-    if (err) console.log(err);
-    // saved!
-  });
-  lm.save(function (err) {
-    if (err) console.log(err);
-    // saved!
-  });
-      } 
+
         
        
    //find acc in shareholder if found increment else add
       } else if([300,311,320,330,332,350,360].includes(doc1.caccNo))
           {
             
-            liabilityupdate=     shmodel.findOne({accNo:da.accNo}, function(err,acc){
+            shareholderUpdate=     shmodel.findOne({accNo:da.accNo}, function(err,acc){
                if(err){
                 console.log(err)
               }
@@ -440,27 +437,8 @@ else if(err){
             })
            
            
-
-            if(liabilityinsert || liabilityupdate){
-     
-              var dm =new dmodel(ma);
-              var cm = new cmodel(da);
+    
            
-              var lm = new lemodel(ba);
-          
-            cm.save(function (err) {
-              if (err) console.log(err);
-              // saved!
-          });
-          dm.save(function (err) {
-            if (err) console.log(err);
-            // saved!
-          });
-          lm.save(function (err) {
-            if (err) console.log(err);
-            // saved!
-          });
-              } 
            
           }
 //Now find the account in balancesheet and increment or decrement or add 
@@ -540,9 +518,7 @@ mup= bmodel.findOne({accNo: ma.accNo}, function(err, bacc) {
     console.log("Error: Account not found to decrement!")
     return;
   }
-  else if(err){
-          console.log(err)
-        }
+ 
   });// Account is a liability account
 if(assetdecrement)
 {
@@ -563,7 +539,7 @@ if(assetdecrement)
           } 
         
         });
-      }else if(value<ma.value){
+      }else if(acc.value<ma.value){
         console.log("ERROR: Account",acc.name," is < than ",ma.name)
         return;
     
