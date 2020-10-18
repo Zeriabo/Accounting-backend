@@ -986,6 +986,9 @@ app.get("/getTrailBalance",async function(req,res){
         
 
 app.use(function (err, req, res, next) {
+  console.error(err.message);
+  if (!err.statusCode) err.statusCode = 500;
+  res.status(err.statusCode).send(err.message);
    // Website you wish to allow to connect
    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
    res.setHeader('Access-Control-Allow-Origin', 'https://zaccounting.netlify.app/');
@@ -1002,8 +1005,6 @@ app.use(function (err, req, res, next) {
 
    // Pass to next layer of middleware
    next();
-  console.error(err.message);
-  if (!err.statusCode) err.statusCode = 500;
-  res.status(err.statusCode).send(err.message);
+ 
 });
 
