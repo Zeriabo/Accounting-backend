@@ -1,12 +1,30 @@
 let express = require('express');
 var path = require("path");  
 var app = express(); 
-
+const socketIO = require('socket.io');
 let mongoose = require('mongoose');
 let cors = require('cors');
 let bodyParser = require('body-parser');
 let dbConfig = require('./database/db');
 const { exit } = require('process');
+const http = require("http");
+const socketIo = require("socket.io");
+const index = require("./routes/index");
+app.use(index);
+const server = http.createServer(app);
+const io = socketIO(server); 
+
+const getApiAndEmit =   socket => {
+  const response = new Date();
+  // Emitting a new message. Will be consumed by the client
+  socket.emit("FromAPI", response);
+};;
+
+
+
+
+
+
 
 app.use(cors());
 // Express Route
@@ -47,11 +65,13 @@ app.use(bodyParser.urlencoded({extended:true, limit:'5mb'}));
 
 // PORT
 const port = process.env.PORT || 4000;
- app.listen(port, () => {
-  console.log('Connected to port ' + port)
-})
+//  app.listen(port, () => {
+//   console.log('Connected to port ' + port)
+// })
 
+//listening on socket 
 
+server.listen(port, () => console.log(`Listening on port ${port}`));
 
 const Schema = mongoose.Schema;
 var ResultBalanceSchema = new Schema({
