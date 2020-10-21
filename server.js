@@ -15,9 +15,9 @@ const server = http.createServer(app);
 const io = socketIO(server); 
 
 const getApiAndEmit =   socket => {
-  const response = new Date();
+  const resp= new Date();
   // Emitting a new message. Will be consumed by the client
-  socket.emit("FromAPI", response);
+  socket.emit("FromAPI", resp);
 };;
 
 
