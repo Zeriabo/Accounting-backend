@@ -1,13 +1,26 @@
 let express = require('express');
 var path = require("path");  
 var app = express(); 
-
+const socketIO = require('socket.io');
 let mongoose = require('mongoose');
 let cors = require('cors');
 let bodyParser = require('body-parser');
 let dbConfig = require('./database/db');
+const { exit } = require('process');
+const http = require("http");
+const socketIo = require("socket.io");
+const index = require("./routes/index");
+app.use(index);
+const server = http.createServer(app);
+const io = socketIO(server); 
 
 
+
+
+
+
+
+app.use(cors());
 // Express Route
 function search(nameKey, myArray){
   for (var i=0; i < myArray.length; i++) {
@@ -46,11 +59,13 @@ app.use(bodyParser.urlencoded({extended:true, limit:'5mb'}));
 
 // PORT
 const port = process.env.PORT || 4000;
- app.listen(port, () => {
-  console.log('Connected to port ' + port)
-})
+//  app.listen(port, () => {
+//   console.log('Connected to port ' + port)
+// })
 
+//listening on socket 
 
+server.listen(port, () => console.log(`Listening on port ${port}`));
 
 const Schema = mongoose.Schema;
 var ResultBalanceSchema = new Schema({
@@ -209,7 +224,7 @@ if (err) console(err);
    assetupdate=   asmodel.findOne({accNo: da.accNo}, function(err, dacc) {
    if(dacc!=null){
     if(dacc.length >0) { 
-      asmodel.updateOne({'accNo': { $in: [da.accNo]}},{$inc: { value: da.value},}, function (err, res) { //Update Assets
+      asmodel.updateOne({'accNo': { $in: [da.accNo]}},{$inc: { value: -da.value},}, function (err, res) { //Update Assets
         if (err){ 
             console.log(err) 
         } 
