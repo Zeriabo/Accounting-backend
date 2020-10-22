@@ -1,29 +1,45 @@
 let express = require('express');
 var path = require("path");  
 var app = express(); 
-const socketIO = require('socket.io');
+
 let mongoose = require('mongoose');
 let cors = require('cors');
 let bodyParser = require('body-parser');
 let dbConfig = require('./database/db');
+const axios = require("axios");
 const { exit } = require('process');
 const http = require("http");
 const socketIo = require("socket.io");
 const index = require("./routes/index");
 app.use(index);
 const server = http.createServer(app);
-const io = socketIO(server); 
+const io = socketIo(server); 
 
-const getApiAndEmit =   socket => {
-  const resp= new Date();
-  // Emitting a new message. Will be consumed by the client
-  socket.emit("FromAPI", resp);
-};;
+const getApiAndEmit = async socket => {
+  try {
+    const res = await axios.get(
+      "https://api.darksky.net/forecast/PUT_YOUR_API_KEY_HERE/43.7695,11.2558"
+    ); // Getting the data from DarkSky
+    socket.emit("FromAPI", res.data.currently.temperature); // Emitting a new message. It will be consumed by the client
+  } catch (error) {
+    console.error(`Error: ${error.code}`);
+  }
+};
 
 
 
 
-
+let interval;
+io.on("connection", socket => {
+  console.log("New client connected");
+  if (interval) {
+    clearInterval(interval);
+  }
+  interval = setInterval(() => getApiAndEmit(socket), 10000);
+  socket.on("disconnect", () => {
+    console.log("Client disconnected");
+  });
+});
 
 
 app.use(cors());
@@ -135,6 +151,7 @@ var dmodel =mongoose.model('Debit',accountSchema,'Debit')
 var bmodel = mongoose.model('Balancesheet',balanceSchema,'Balancesheet')
 
 app.post("/emptydata",async function(re,res){
+  socket.emit("FromAPI", "Emptying the data"); 
   await lemodel.deleteMany({});
   await asmodel.deleteMany({});
   await limodel.deleteMany({});
