@@ -1,26 +1,13 @@
 let express = require('express');
 var path = require("path");  
 var app = express(); 
+
 let mongoose = require('mongoose');
 let cors = require('cors');
 let bodyParser = require('body-parser');
 let dbConfig = require('./database/db');
-const axios = require("axios");
-const { exit } = require('process');
-const http = require("http")
-const server = http.createServer(app);
-
-const io = require("socket.io")(server);
-const index = require("./routes/index");
-app.use(index);
 
 
-
-
-
-
-
-app.use(cors());
 // Express Route
 function search(nameKey, myArray){
   for (var i=0; i < myArray.length; i++) {
@@ -59,16 +46,11 @@ app.use(bodyParser.urlencoded({extended:true, limit:'5mb'}));
 
 // PORT
 const port = process.env.PORT || 4000;
-//  app.listen(port, () => {
-//   console.log('Connected to port ' + port)
-// })
+ app.listen(port, () => {
+  console.log('Connected to port ' + port)
+})
 
-//listening on socket 
 
-// server.listen(port, () => console.log(`Listening on port ${port}`));
-// io.on("connection", function(socket) {
-//   console.log("socket connected");
-//  });
 
 const Schema = mongoose.Schema;
 var ResultBalanceSchema = new Schema({
@@ -132,7 +114,6 @@ var dmodel =mongoose.model('Debit',accountSchema,'Debit')
 var bmodel = mongoose.model('Balancesheet',balanceSchema,'Balancesheet')
 
 app.post("/emptydata",async function(re,res){
-  socket.emit("FromAPI", "Emptying the data"); 
   await lemodel.deleteMany({});
   await asmodel.deleteMany({});
   await limodel.deleteMany({});
@@ -1025,4 +1006,3 @@ app.use(function (err, req, res, next) {
    next();
  
 });
-
