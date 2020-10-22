@@ -209,7 +209,7 @@ if (err) console(err);
    assetupdate=   asmodel.findOne({accNo: da.accNo}, function(err, dacc) {
    if(dacc!=null){
     if(dacc.length >0) { 
-      asmodel.updateOne({'accNo': { $in: [da.accNo]}},{$inc: { value: -da.value},}, function (err, res) { //Update Assets
+      asmodel.updateOne({'accNo': { $in: [da.accNo]}},{$inc: { value: da.value},}, function (err, res) { //Update Assets
         if (err){ 
             console.log(err) 
         } 
