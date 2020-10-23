@@ -227,10 +227,16 @@ if (err) console(err);
       asmodel.updateOne({'accNo': { $in: [da.accNo]}},{$inc: { value: -da.value},}, function (err, res) { //Update Assets
         if (err){ 
             console.log(err) 
+            res.status(500).json({
+              error: 'Technical error occurred'
+          });
         } 
         else{ 
             console.log("Decrement of Assets Account: ", da.name);
-           res.send("Assets has been Updated")
+            res.status(400).send('Assets Updated');
+           res.json({
+            data: 'Subscription saved.'
+        });
         } 
       
       });  
