@@ -241,6 +241,7 @@ if (err) console(err);
                res.send(err)
             } 
             else{ 
+              res.status(201).send(`Updated of Assets`);
                 console.log("Updated Docs of debit : ", docs);
                 res.setHeader('Content-Type', 'application/json'); 
                 res.status(200).json({docs:'Assets has been Updated'})
