@@ -324,7 +324,7 @@ bb.save(function (err) {
   }else if(dacc.mvalue+ma.value<da.value+dacc.dvalue)
   {
   
-    bmodel.updateOne({'accNo': ma.accNo},{$inc: { dvalue: -ma.value},}, function (err, docs) { //Update balancesheet
+    bmodel.updateOne({'accNo': ma.accNo},{$inc: { dvalue: ma.value},}, function (err, docs) { //Update balancesheet
       if (err){ 
           console.log(err) 
       } 
@@ -516,7 +516,7 @@ mup= bmodel.findOne({accNo: ma.accNo}, function(err, bacc) {
  { 
   assetdecrement = asmodel.findOne({accNo: da.accNo}, function(err, acc) {
     if(acc && (acc.value-da.value>=0)) {
-      asmodel.updateOne({'accNo': { $in: [da.accNo]}},{$inc: { value: -da.value},}, function (err, docs) { //update Assets
+      asmodel.updateOne({'accNo': { $in: [da.accNo]}},{$inc: { value: da.value},}, function (err, docs) { //update Assets
         if (err){ 
             console.log(err);
            
@@ -545,7 +545,7 @@ if(assetdecrement)
     limodel.findOne({accNo:ma.accNo}, function(err,acc){
       if(acc!=null && acc.value>=ma.value)
       {
-   liabilityupdate =  limodel.updateOne({'accNo': { $in: [ma.accNo]}},{$inc: { value: -ma.value},}, function (err, docs) { //update Assets
+   liabilityupdate =  limodel.updateOne({'accNo': { $in: [ma.accNo]}},{$inc: { value: ma.value},}, function (err, docs) { //update Assets
           if (err){ 
               console.log(err) 
           } 
@@ -576,7 +576,7 @@ if(assetdecrement)
     } 
             if(acc!=null)
             {
-              shmodel.updateOne({'accNo': { $in: [ma.accNo]}},{$inc: { value: -ma.value},}, function (err, docs) { 
+              shmodel.updateOne({'accNo': { $in: [ma.accNo]}},{$inc: { value: ma.value},}, function (err, docs) { 
                 if (err){ 
                     console.log(err) 
                 } 
@@ -707,7 +707,7 @@ else  if(bacc) {console.log("Found!");
   } 
         else    if(liabilityupdate && liabilityupdate.value>=ma.value)
             {
-              limodel.updateOne({'accNo': { $in: [ma.accNo]}},{$inc: { value: -ma.value},}, function (err, docs) { //update Assets
+              limodel.updateOne({'accNo': { $in: [ma.accNo]}},{$inc: { value: ma.value},}, function (err, docs) { //update Assets
                 if (err){ 
                     console.log(err) 
                 } 
@@ -737,7 +737,7 @@ else  if(bacc) {console.log("Found!");
                 } 
                 else  if(liabilityupdate && liabilityupdate.value>=ma.value)
                   {
-                    shmodel.updateOne({'accNo': { $in: [ma.accNo]}},{$inc: { value: -ma.value},}, function (err, docs) { 
+                    shmodel.updateOne({'accNo': { $in: [ma.accNo]}},{$inc: { value: ma.value},}, function (err, docs) { 
                       if (err){ 
                           console.log(err) 
                       } 
@@ -853,7 +853,7 @@ else  if(bacc) {console.log("Found!");
           
              else  if(bacc && bacc.mvalue>=ma.value) {
               console.log("Found!");
-            bmodel.updateOne({'accNo': ma.accNo},{$inc: { mvalue: -ma.value},}, function (err, docs) { //Update balancesheet
+            bmodel.updateOne({'accNo': ma.accNo},{$inc: { mvalue: ma.value},}, function (err, docs) { //Update balancesheet
               if (err){ 
                   console.log(err) 
               } 
