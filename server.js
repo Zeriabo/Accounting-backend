@@ -988,7 +988,7 @@ app.get("/getTrailBalance",async function(req,res){
         },
         {
             $addFields:{
-              Result: { "$subtract": ("$dvalue">"$mvalue")? ["$dvalue","$mvalue"]: ["$mvalue">"$dvalue"]?["$mvalue","$dvalue"]:"Equal balance"}
+              Result: { "$subtract": ("$dvalue">"$mvalue")? ["$dvalue","$mvalue"]: ["$mvalue","$dvalue"]}
             }
          }
         ], (err, creditbook) => {
