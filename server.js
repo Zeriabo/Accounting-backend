@@ -147,9 +147,20 @@ app.post("/intializeData",async function(req,res){
   await dmodel.deleteMany({});
   await bmodel.deleteMany({});
   const init= {name:"Bank/Cash at Bank",accNo:101,value:1000000}
-
+  const init2= {name:"Owner Capital",accNo:300,value:1000000}
+ const init2b={accNo:300,mvalue:0,dvalue:1000000}
   const initb= {accNo:101,mvalue:1000000,dvalue:0}
-
+  var ls = new limodel(init2)
+    ls.save(function (err,d) {
+    if (err) console(err);
+   else console.log(d)
+});
+var abl = new bmodel(init2b)
+abl.save(function (err,d) {
+if (err) console(err);
+else console.log(d)
+// saved!
+});
   var as = new asmodel(init)
     as.save(function (err,d) {
     if (err) console(err);
