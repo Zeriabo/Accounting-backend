@@ -255,6 +255,9 @@ if (err) console(err);
         if( macc) {
       asmodel.updateOne({'accNo': { $in: [ma.accNo]}},{$inc: { value: ma.value},}, function (err, docs) { //update Assets
             if (err){ 
+              res.status(500).json({
+                error: 'Technical error occurred'
+            });
                res.send(err)
             } 
             else{ 
