@@ -176,7 +176,7 @@ else console.log(d)
 })
 app.post("/savedata",function(req,res){ 
    
-    console.log("Inserting ...")
+    
     var doc1 = { credit: req.body.credit,debit:req.body.debit ,caccNo:req.body.cAccNo,daccNo: req.body.dAccNo,dvalue:req.body.dvalue,cvalue:req.body.cvalue };
 
     //Need to insert to the leger for the Trail balance sheet!!!!!
@@ -245,8 +245,8 @@ if (err) console(err);
         else{ 
             console.log("Decrement of Assets Account: ", da.name);
             res.status(400).send('Assets Updated');
-           res.status(200).json({
-            data: 'Updated Assets.'
+           res.json({
+            data: 'Subscription saved.'
         });
         } 
       
@@ -255,7 +255,7 @@ if (err) console(err);
         if( macc) {
       asmodel.updateOne({'accNo': { $in: [ma.accNo]}},{$inc: { value: ma.value},}, function (err, docs) { //update Assets
             if (err){ 
-              res.status(401).send("Error while updating debit Asset")
+               res.send(err)
             } 
             else{ 
               res.status(201).send(`Updated of Assets`);
@@ -272,7 +272,7 @@ if (err) console(err);
         var as = new asmodel(ma)
          assetinsert=   as.save(function (err,res) {
           if (err) console(err);
-          else res.status(200).send("Assets has been Updated")
+          else res.send("Assets has been Updated")
           // saved!
       });
       }
@@ -283,10 +283,9 @@ if (err) console(err);
 
     }
   
-  }else if(!dacc.length)
+  }else if(dacc==null)
   {
-    res.status(401).send('Credit Asset Account doesnt exist in Database ',da.name);
-    console.log("not found")
+     console.log('Credit Asset Account doesnt exist in Database ',da.name);
   }
   
   else if(err){
