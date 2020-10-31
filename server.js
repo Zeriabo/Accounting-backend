@@ -175,7 +175,7 @@ else console.log(d)
 });
 })
 app.post("/savedata",function(req,res){ 
-   
+   console.log("inserting ...")
     
     var doc1 = { credit: req.body.credit,debit:req.body.debit ,caccNo:req.body.cAccNo,daccNo: req.body.dAccNo,dvalue:req.body.dvalue,cvalue:req.body.cvalue };
 
@@ -194,9 +194,12 @@ const DD="Debit"; CC="Credit";
  da.accNo=doc1.caccNo;
  da.value=doc1.cvalue;
 
+(ma.name == da.name)?  res.status(500).json({
+  error: 'Debit and Credit Cant be the Same!'
+}):
 
 
- 
+ console.log(ma.name,da.name)
 
  ba.mname=doc1.debit;
  ba.dname=doc1.credit;
@@ -205,7 +208,10 @@ const DD="Debit"; CC="Credit";
  ba.mvalue=doc1.dvalue;
  ba.dvalue=doc1.cvalue;
  var assetinsert,assetupdate,liabilityinsert,liabilityupdate,assetdecrement;
+if(ma.name == da.name){
+  res.status(500).send("Debit Account Same Credit Account!")
 
+}
  // Asset insert and updates are correct credit and debit and ledger Okay Balancesheet find and update not found insert (for each)
 
   if( ([101,102,108,110,112,116,130,157,158].includes(doc1.daccNo ) )
@@ -949,13 +955,13 @@ app.get("/getTrailBalance",async function(req,res){
     
         lemodel.find({}, (err, book) => {
             if (err) {
-                res.status(500).send()
+              res.send(err)
+
             }else if(book.length==0)
-                    {
-                      
-                       console.log("book length is Zero")
+                    {                  
                         var responseObject = undefined;
-                        res.status(404).send(responseObject)
+                        res.status(404).send("There is No Data yet!")
+                            
                     } else if(book.length>0) {
                
          console.log("This is it :",book)
@@ -1000,8 +1006,8 @@ app.get("/getTrailBalance",async function(req,res){
             }else if(creditbook.length==0)
             {
                
-                var responseObject = undefined;
-                res.status(404).send(responseObject)
+                
+                res.status(404).send("There is No Data yet!")
             } else {
                
               a.push(creditbook);  
@@ -1013,7 +1019,7 @@ app.get("/getTrailBalance",async function(req,res){
         });
  
               
- console.log(t)
+
  res.send(t)
          
             
