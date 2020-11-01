@@ -288,6 +288,7 @@ if (err) console(err);
   
   }else if(dacc==null)
   {
+    res.status(404).send('Credit Asset Account doesnt exist in Database Cant insert',da.name);
      console.log('Credit Asset Account doesnt exist in Database ',da.name);
   }
   
@@ -957,8 +958,7 @@ app.get("/getTrailBalance",async function(req,res){
                         res.status(404).send("There is No Data yet!")
                             
                     } else if(book.length>0) {
-               
-         console.log("This is it :",book)
+      
               res.send(book)  ;     
              
             }
