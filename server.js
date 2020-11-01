@@ -288,7 +288,7 @@ if (err) console(err);
   
   }else if(dacc==null)
   {
-    res.status(404).send('Credit Asset Account doesnt exist in Database Cant insert',da.name);
+    res.status(201).send('Credit Asset Account doesnt exist in Database Cant insert',da.name);
      console.log('Credit Asset Account doesnt exist in Database ',da.name);
   }
   
