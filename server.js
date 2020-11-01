@@ -175,8 +175,7 @@ else console.log(d)
 });
 })
 app.post("/savedata",function(req,res){ 
-   console.log("inserting ...")
-    
+
     var doc1 = { credit: req.body.credit,debit:req.body.debit ,caccNo:req.body.cAccNo,daccNo: req.body.dAccNo,dvalue:req.body.dvalue,cvalue:req.body.cvalue };
 
     //Need to insert to the leger for the Trail balance sheet!!!!!
@@ -194,9 +193,7 @@ const DD="Debit"; CC="Credit";
  da.accNo=doc1.caccNo;
  da.value=doc1.cvalue;
 
-(ma.name == da.name)?  res.status(500).json({
-  error: 'Debit and Credit Cant be the Same!'
-}):
+
 
 
  console.log(ma.name,da.name)
