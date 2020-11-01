@@ -205,10 +205,7 @@ const DD="Debit"; CC="Credit";
  ba.mvalue=doc1.dvalue;
  ba.dvalue=doc1.cvalue;
  var assetinsert,assetupdate,liabilityinsert,liabilityupdate,assetdecrement;
-if(ma.name == da.name){
-  res.status(500).send("Debit Account Same Credit Account!")
 
-}
  // Asset insert and updates are correct credit and debit and ledger Okay Balancesheet find and update not found insert (for each)
 
   if( ([101,102,108,110,112,116,130,157,158].includes(doc1.daccNo ) )
