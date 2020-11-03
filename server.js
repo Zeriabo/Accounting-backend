@@ -275,7 +275,7 @@ if (err) console(err);
         var as = new asmodel(ma)
          assetinsert=   as.save(function (err,res) {
           if (err) console(err);
-          else res.send("Assets has been Updated")
+          else res.status(200).send("Assets has been Updated")
           // saved!
       });
       }
@@ -1026,6 +1026,7 @@ app.use(function (err, req, res, next) {
   res.status(err.statusCode).send(err.message);
    // Website you wish to allow to connect
    res.setHeader('Access-Control-Allow-Origin', 'https://localhost:3000/');
+   res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000/');
    res.setHeader('Access-Control-Allow-Origin', 'https://zaccounting.netlify.app/');
    //res.setHeader('Access-Control-Allow-Origin', '*'); // to enable calls from every domain 
    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
