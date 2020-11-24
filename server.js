@@ -14,7 +14,7 @@ app.use(index);
 const server = http.createServer(app);
 const io = socketIO(server); 
 
-
+let message = ''
 
 
 
@@ -127,6 +127,9 @@ var shmodel = mongoose.model('ShareholderEquity',accountSchema,'ShareholdersEqui
 var cmodel =mongoose.model('Credits',accountSchema,'Credit')
 var dmodel =mongoose.model('Debit',accountSchema,'Debit')
 var bmodel = mongoose.model('Balancesheet',balanceSchema,'Balancesheet')
+var revmodel = mongoose.model('Revenues', accountSchema,'Revenues'); 
+var expmodel = mongoose.model('Expenses', accountSchema,'Expenses'); 
+var ibmodel = mongoose.model('Incomesheet',balanceSchema,'Incomesheet')
 
 app.post("/emptydata",async function(re,res){
   await lemodel.deleteMany({});
@@ -136,6 +139,9 @@ app.post("/emptydata",async function(re,res){
   await cmodel.deleteMany({});
   await dmodel.deleteMany({});
   await bmodel.deleteMany({});
+  await revmodel.deleteMany({});
+  await expmodel.deleteMany({});
+  await ibmodel.deleteMany({});
 })
 
 app.post("/intializeData",async function(req,res){
@@ -174,21 +180,23 @@ else console.log(d)
 // saved!
 });
 })
-app.post("/savedata",function(req,res){ 
+
+app.post("/savedata",async function(req,res){ 
 
     var doc1 = { credit: req.body.credit,debit:req.body.debit ,caccNo:req.body.cAccNo,daccNo: req.body.dAccNo,dvalue:req.body.dvalue,cvalue:req.body.cvalue };
+const data=res.body
 
     //Need to insert to the leger for the Trail balance sheet!!!!!
 const DD="Debit"; CC="Credit";
- const ma = {};
- const da = {};
- const ba = {};
- const bal={};
+ var ma = {};
+ var da = {};
+ var ba = {};
+ var bal={};
 
  ma.name=doc1.debit;
  ma.accNo=doc1.daccNo;
  ma.value=doc1.dvalue;
- 
+ console.log(ma)
  da.name=doc1.credit;
  da.accNo=doc1.caccNo;
  da.value=doc1.cvalue;
@@ -205,15 +213,248 @@ const DD="Debit"; CC="Credit";
  ba.mvalue=doc1.dvalue;
  ba.dvalue=doc1.cvalue;
  var assetinsert,assetupdate,liabilityinsert,liabilityupdate,assetdecrement;
+//IncomeStatement Insert into Revenue or Expenses and to the Assets or liability accounts
+if( ([101,112].includes(doc1.daccNo ) )
+ 
+&& ([400,410,420,430,570,585,595,597,599,631,711,722,726,729,732,905].includes(doc1.caccNo)   ))
+//Expenses decrease in credit
+{
+      
+ var dm =new dmodel(ma);
+ var cm = new cmodel(da);
 
- // Asset insert and updates are correct credit and debit and ledger Okay Balancesheet find and update not found insert (for each)
+ var lm = new lemodel(ba);
+
+cm.save(function (err) {
+ if (err) console(err);
+ // saved!
+});
+dm.save(function (err) {
+if (err) console(err);
+// saved!
+});
+lm.save(function (err) {
+if (err) console(err);
+// saved!
+});
+if(da.accNo>500)
+{
+  expmodel.findOne({accNo:da.accNo}, function(err,dacc){
+    if(dacc!=null){
+      if(dacc.length > 0){
+        expmodel.updateOne({'accNo':{$in: [da.accNo]}},{$inc:{value:-da.value},},function(err,res){
+          if(err){
+            console.log(err) 
+            res.status(500).json({
+              error: 'Technical error occurred'
+          });
+        } else{ 
+          res.send(body)
+          res.status(201).json({
+            message:'Post saved!'
+          })
+          console.log("Decrement of Expenses Account: ", da.name);
+          res.status(400).json({message:'Expenses Updated'});
+         res.status(201).json({
+          message: 'Subscription saved.'
+      });
+      }  
+        });
+        asmodel.findOne({accNo: ma.accNo}, function(err, macc) {
+          if( macc) {
+        asmodel.updateOne({'accNo': { $in: [ma.accNo]}},{$inc: { value: ma.value},}, function (err, docs) { //update Assets
+              if (err){ 
+                res.status(500).json({
+                  error: 'Technical error occurred'
+              });
+                 res.send(err)
+              } 
+              else{ 
+                res.status(201).send(`Updated of Assets`);
+                  console.log("Updated Docs of debit : ", docs);
+                  res.setHeader('Content-Type', 'application/json'); 
+                  res.status(200).json({docs:'Assets has been Updated'})
+              } 
+            
+            });
+           
+            
+        }else if(macc.length==0)
+        {
+          var as = new asmodel(ma)
+           assetinsert=   as.save(function (err,res) {
+            if (err) console(err);
+            else res.status(200).send("Assets has been Updated")
+            // saved!
+        });
+        }
+        else if(err){
+                console.log(err)
+              }
+        });
+      }
+    }
+  })
+}else if (da.accNo<500)
+{
+  revmodel.findOne({accNo:da.accNo}, function(err,dacc){
+    if(dacc!=null){
+      if(dacc.length > 0){
+        expmodel.updateOne({'accNo':{$in: [da.accNo]}},{$inc:{value:da.value},},function(err,res){
+          if(err){
+            console.log(err) 
+            res.status(500).json({
+              error: 'Technical error occurred'
+          });
+        } else{ 
+          console.log("Increment of Revenue Account: ", da.name);
+          res.status(400).send('Revenue Updated');
+         res.json({
+          data: 'Subscription saved.'
+      });
+      }  
+        });
+        asmodel.findOne({accNo: ma.accNo}, function(err, macc) {
+          if( macc) {
+        asmodel.updateOne({'accNo': { $in: [ma.accNo]}},{$inc: { value: ma.value},}, function (err, docs) { //update Assets
+              if (err){ 
+                res.status(500).json({
+                  error: 'Technical error occurred'
+              });
+                 res.send(err)
+              } 
+              else{ 
+                res.status(201).send(`Updated of Assets`);
+                  console.log("Updated Docs of debit : ", docs);
+                  res.setHeader('Content-Type', 'application/json'); 
+                  res.status(200).json({docs:'Assets has been Updated'})
+              } 
+            
+            });
+           
+            
+        }else if(macc.length==0)
+        {
+          var as = new asmodel(ma)
+           assetinsert=   as.save(function (err,res) {
+            if (err) console(err);
+            else res.status(200).send("Assets has been Updated")
+            // saved!
+        });
+        }
+        else if(err){
+                console.log(err)
+              }
+        });
+      }
+    }
+  })
+}
+   
+ mup= bmodel.findOne({accNo: ma.accNo}, function(err, bacc) {  
+if(bacc) {
+bmodel.updateOne({'accNo': ma.accNo},{$inc: { mvalue: ma.value},}, function (err, docs) { //Update balancesheet
+ if (err){ 
+     console.log(err) 
+ } 
+ else{ 
+  res.status(200).send("Updated  balancesheet ");
+     
+ } 
+
+});
+}else if(!bacc){ 
+ bal.accNo=ma.accNo;
+ bal.accName=ma.accName;
+ bal.mvalue=ma.value;
+ bal.dvalue= 0;
+ var bb= new bmodel(bal)
+bb.save(function (err) {
+if (err) res.status(500).send(err);
+else console.log("Saved!")
+// saved!
+});}
+
+ });
+if(da.accNo>500)
+{
+  ibmodel.findOne({accNo: da.accNo}, function (err,dacc){
+    //exp - rev +
+   ibmodel.updateOne({'accNo':da.accNo},{$inc:{dvalue:da.value},},function(err,docs){
+     if(err)
+     {
+       res.status(500).send(err)
+     }else {
+      // res.status(200).send("Updated in Incomesheet")
+      console.log("Updated Docs of balanceshheet credit : ", docs); 
+     }
+   });
+  })
+} else{
+  ibmodel.findOne({accNo: da.accNo}, function (err,dacc){
+    //exp - rev +
+   ibmodel.updateOne({'accNo':da.accNo},{$inc:{dvalue:-da.value},},function(err,docs){
+     if(err)
+     {
+       res.status(500).send(err)
+     }else {
+      // res.status(200).send("Updated in Incomesheet")
+      console.log("Updated Docs of balanceshheet credit : ", docs); 
+     }
+   });
+  })
+
+}
+ dup= bmodel.findOne({accNo: da.accNo}, function(err, dacc) {
+   if(dacc  && dacc.mvalue>=da.value+dacc.dvalue) {
+         
+
+   bmodel.updateOne({'accNo':da.accNo},{$inc: { dvalue: da.value},}, function (err, docs) { //Update balancesheeet
+     if (err){ 
+         console.log(err) 
+     } 
+     else{ 
+         console.log("Updated Docs of balanceshheet credit : ", docs); 
+        
+     } 
+   
+   });  
+
+
+
+ }else if(!dacc){  console.log("Transaction can't be Completed!") 
+
+  // saved!
+ }else if(dacc.mvalue+ma.value<da.value+dacc.dvalue)
+ {
+ 
+   bmodel.updateOne({'accNo': ma.accNo},{$inc: { dvalue: ma.value},}, function (err, docs) { //Update balancesheet
+     if (err){ 
+         console.log(err) 
+     } 
+     else{ 
+         console.log("Can't be added the Credit is more than the Debit in the Database Rolled back Changes!: ", docs,ma.accNo); 
+         res.status(404).send("Can't")
+     } 
+   
+   });
+ }
+ });
+  
+      
+
+    
+     
+
+ }
+
+ //Asset inseert ands updates are correct credit and debit and ledger Okay Balancesheet find and update not found insert (for each)
 
   if( ([101,102,108,110,112,116,130,157,158].includes(doc1.daccNo ) )
  
  && ([101,102,108,110,112,116,130,157,158].includes(doc1.caccNo)   ))
  
- {
-       
+ { 
   var dm =new dmodel(ma);
   var cm = new cmodel(da);
  
@@ -232,26 +473,26 @@ if (err) console(err);
 // saved!
 });
 
-   assetupdate=   asmodel.findOne({accNo: da.accNo}, function(err, dacc) {
+   creditAssetupdate= await  asmodel.findOne({accNo: da.accNo}, function(err, dacc) {
    if(dacc!=null){
     if(dacc.length >0) { 
       asmodel.updateOne({'accNo': { $in: [da.accNo]}},{$inc: { value: -da.value},}, function (err, res) { //Update Assets
         if (err){ 
-            console.log(err) 
-            res.status(500).json({
-              error: 'Technical error occurred'
-          });
-        } 
-        else{ 
-            console.log("Decrement of Assets Account: ", da.name);
-            res.status(400).send('Assets Updated');
-           res.json({
-            data: 'Subscription saved.'
+           
+          res.status(500).json({
+            error: 'Technical error occurred'
         });
         } 
+        else{  
       
-      });  
-      asmodel.findOne({accNo: ma.accNo}, function(err, macc) {
+          message+='Assets of '+da.name.toString()+' has been Updated \n'
+                 
+        } 
+      
+      }).then(message+=da.name.toString()+" Has been updated in Assets \n")
+   }}}
+  ).then(message+='Credit Account '+da.name.toString()+' is Decremented ! \n')    
+ DebitAssetupdate=   await  asmodel.findOne({accNo: ma.accNo}, function(err, macc) {
         if( macc) {
       asmodel.updateOne({'accNo': { $in: [ma.accNo]}},{$inc: { value: ma.value},}, function (err, docs) { //update Assets
             if (err){ 
@@ -260,54 +501,52 @@ if (err) console(err);
             });
                res.send(err)
             } 
-            else{ 
-              res.status(201).send(`Updated of Assets`);
-                console.log("Updated Docs of debit : ", docs);
-                res.setHeader('Content-Type', 'application/json'); 
-                res.status(200).json({docs:'Assets has been Updated'})
-            } 
+            
           
-          });
+          }).then(message+="Debit Asset "+ma.name.toString()+" is updated\n")
          
           
-      }else if(macc.length==0)
-      {
+      }else if(macc ==null)
+      {message+=("Debit Asset"+ma.name+" is Created\n")
         var as = new asmodel(ma)
          assetinsert=   as.save(function (err,res) {
-          if (err) console(err);
-          else res.status(200).send("Assets has been Updated")
-          // saved!
-      });
+          if (err) console(err)
+
+      })
       }
       else if(err){
-              console.log(err)
-            }
+        res.status(500).json({
+          error: 'Technical error occurred'
       });
+            }
+      })
 
-    }
+
+
   
-  }else if(dacc==null)
-  {
-    res.status(201).send('Credit Asset Account doesnt exist in Database Cant insert',da.name);
-     console.log('Credit Asset Account doesnt exist in Database ',da.name);
-  }
+
+
   
-  else if(err){
-          console.log(err)
-        }
-  });        
-  mup= bmodel.findOne({accNo: ma.accNo}, function(err, bacc) {  
+   
+   
+  
+  mup= await bmodel.findOne({accNo: ma.accNo}, function(err, bacc) {  
 if(bacc) {
-bmodel.updateOne({'accNo': ma.accNo},{$inc: { mvalue: ma.value},}, function (err, docs) { //Update balancesheet
+  bmodel.updateOne({'accNo': ma.accNo},{$inc: { mvalue: ma.value},}, function (err, docs) { //Update balancesheet
   if (err){ 
-      console.log(err) 
+    res.status(500).json({
+      error: 'Technical error occurred'
+  });
   } 
-  else{ 
-      console.log("Updated Docs of debit balancesheet : ", docs,ma.accNo);
+  else{
+  
+   // res.status(201).send('Ipdated Debits',ma.name.toString()); 
+ //  assetupdate.then(  message+=(' '+ma.name.toString()+' was updated in Balancesheet \n'))
+   
       
   } 
 
-});
+})
 }else if(!bacc){ 
   bal.accNo=ma.accNo;
   bal.accName=ma.accName;
@@ -316,13 +555,16 @@ bmodel.updateOne({'accNo': ma.accNo},{$inc: { mvalue: ma.value},}, function (err
   var bb= new bmodel(bal)
 bb.save(function (err) {
  if (err) console(err);
- else console.log("Saved!")
+ else message+=(ma.name+" has been created in balancesheet\n")
  // saved!
-});}
+})
 
-  });
+
+}
+
+  }).then(message+=" "+ma.name+" has been updated in the BalanceSheet \n")
   
-  dup= bmodel.findOne({accNo: da.accNo}, function(err, dacc) {
+   bmodel.findOne({accNo: da.accNo}, function(err, dacc) {
     if(dacc  && dacc.mvalue>=da.value+dacc.dvalue) {
           
 
@@ -331,15 +573,14 @@ bb.save(function (err) {
           console.log(err) 
       } 
       else{ 
-          console.log("Updated Docs of balanceshheet credit : ", docs); 
-         
+        
       } 
     
-    });  
+    });
 
 
 
-  }else if(!dacc){  console.log("Transaction can't be Completed!") 
+  }else if(!dacc){ message+="Transaction can't be Completed! \n"
 
    // saved!
   }else if(dacc.mvalue+ma.value<da.value+dacc.dvalue)
@@ -350,18 +591,21 @@ bb.save(function (err) {
           console.log(err) 
       } 
       else{ 
-          console.log("Can't be added the Credit is more than the Debit in the Database Rolled back Changes!: ", docs,ma.accNo); 
+        message+=("Credit of"+da.name+" is more than the Debit in the Database Rolled back Changes!"); 
       } 
     
     });
   }
-  });
+  }).then(message+=" "+da.name+" has been updated in the BalanceSheet \n",message+='  '+da.name+"Was not updated in Balancesheet \n")
    
        
-
-     
-      
-
+  res.status(200).json({
+    message:message
+  });
+  console.log(message)  
+  message = ''  
+    console.log(ma)
+    ma,da,ba,bal ={}
   }
 
  
@@ -370,7 +614,9 @@ else  if(( [101,102,108,110,112,116,130,157,158].includes(doc1.daccNo )
  
  &&  [200,201,209,230,231,300,311,320,330,332,350,360].includes(doc1.caccNo)   ))
 
- {  // we need to add the asset if not existed or update it and same for the liability or shareholder 
+ { 
+   
+  // we need to add the asset if not existed or update it and same for the liability or shareholder 
    var dm =new dmodel(ma);
   var cm = new cmodel(da);
  
@@ -388,31 +634,29 @@ lm.save(function (err) {
 if (err) console(err);
 // saved!
 });
-   asmodel.findOne({accNo: ma.accNo}, function(err, acc) {
-    if(err){
-      console.log(err)
-    }else   if(acc) {
+// 3al find beddak teshteghil mush jowa okaaay w ta3mil el rejection kamen
+var ms = ''
 asmodel.updateOne({'accNo': { $in: [ma.accNo]}},{$inc: { value: ma.value},}, function (err, docs) { //update Assets
-      if (err){ 
-          console.log(err) 
-      } 
-      else{ 
-          console.log("Updated Docs of debit account in Assets: ", ma.name,  docs); 
-      } 
+  if (err){ 
+      console.log(err) 
+  } else if(docs.nModified==0)
+  {
+    var as = new asmodel(ma)
+       as.save(function (err) {
+      if (err) console.log(err);
+      else message+=" "+ma.name+" has been Created in the Assets table! \n"
+      // saved!
+  })
+  }
+  else{
     
-    });
-   
-   
-}else if(!acc)
-{
-  var as = new asmodel(ma)
-   assetinsert=   as.save(function (err) {
-    if (err) console.log(err);
-    // saved!
-});
-}
+      console.log("Updated Docs of debit account in Assets: ", ma.name,  docs); 
+    
+  } 
 
-});
+}).then(message+=" "+ma.name+" has been updated in the Assets \n" )
+
+
    if([200,201,209,230,231].includes(doc1.caccNo))
    {//find acc in liabilities if found increment else add
     
@@ -425,18 +669,20 @@ asmodel.updateOne({'accNo': { $in: [ma.accNo]}},{$inc: { value: ma.value},}, fun
               console.log(err) 
           } 
           else{ 
+    
               console.log("Updated Docs of Credit Liabililty : ",da.name, docs); 
           } 
         
-        });
+        })
       }else if (!acc){
         var li = new limodel(da)
         liabilityinsert=   li.save(function (err) {
           if (err) console.log(err);
+          else message+=" "+da.name+" has been Created in the Liabilities \n"
           // saved!
-      });
+      })
     }
-    });
+    }).then(message+=" "+da.name+" has been Updated in the Liabilities \n")
     
     
     
@@ -447,30 +693,25 @@ asmodel.updateOne({'accNo': { $in: [ma.accNo]}},{$inc: { value: ma.value},}, fun
       } else if([300,311,320,330,332,350,360].includes(doc1.caccNo))
           {
             
-            shareholderUpdate=     shmodel.findOne({accNo:da.accNo}, function(err,acc){
-               if(err){
-                console.log(err)
-              }
-              else if(acc!=null)
-              {
+            
                 shmodel.updateOne({'accNo': { $in: [da.accNo]}},{$inc: { value: da.value},}, function (err, docs) { //update Assets
                   if (err){ 
                       console.log(err) 
+                  }else if(!docs){
+                    var sh = new shmodel(da)
+                    liabilityinsert=    sh.save(function (err) {
+                      if (err) console.log(err);
+                      else message+=" "+da.name+" has been Created in the Shareholders \n"
+                      // saved!
+                  })
                   } 
                   else{ 
-                      console.log("Updated Docs of Credit Shareholder : ",acc.name, docs); 
+                      console.log("Updated Docs of Credit Shareholder : ",da.name, docs); 
+                     
                   } 
                 
-                });
-              }else if(!acc){
-                var sh = new shmodel(da)
-                liabilityinsert=    sh.save(function (err) {
-                  if (err) console.log(err);
-                  // saved!
-              });
-              }
+                }).then(message+=" "+da.name+" has been updated in shareholders")
              
-            })
            
            
     
@@ -485,10 +726,11 @@ mup= bmodel.findOne({accNo: ma.accNo}, function(err, bacc) {
         console.log(err) 
     } 
     else{ 
+      message+=" "+ma.name+" has been updated in the Balancesheet \n"
         console.log("Updated Docs of debit balancesheet : ",ma.accNo,da.accNo, docs); 
     } 
   
-  });
+  })
   }else if(!bacc){  bal.accNo=ma.accNo;
     bal.accName=ma.accName;
     bal.mvalue=ma.value;
@@ -496,9 +738,10 @@ mup= bmodel.findOne({accNo: ma.accNo}, function(err, bacc) {
     var bb= new bmodel(bal)
   bb.save(function (err) {
    if (err) console(err);
-   else console.log("Saved!")
+   else message+=" "+ma.name+" has been Created in the Balancesheet \n"
    // saved!
-  });}
+  })
+}
   
     });
     
@@ -512,10 +755,11 @@ mup= bmodel.findOne({accNo: ma.accNo}, function(err, bacc) {
             console.log(err) 
         } 
         else{ 
+          message+=" "+da.name+" has been updated in the Balancesheet \n"
             console.log("Updated Docs of balanceshheet credit : ", docs); 
         } 
       
-      });  
+      })
   
   
   
@@ -526,13 +770,25 @@ mup= bmodel.findOne({accNo: ma.accNo}, function(err, bacc) {
       var bb= new bmodel(bal)
     bb.save(function (err) {
      if (err) console(err);
-     else console.log("Saved!")
+   
+     else message+=" "+da.name+" has been Saved in the Balancesheet \n"
      // saved!
-    });}
+    })
+  
+  }
     });
   
-    //debit is an liability or shareholder (-) and credit is an Assets (-) 
- 
+   
+    console.log(message)
+    if(message.length>0)
+    {res.status(200).json({
+      message:message
+    });}
+    
+    message = ''
+    ma,da,ba,bal ={}  
+     
+     
  }  if(([200,201,209,230,231,300,311,320,330,332,350,360].includes(doc1.daccNo)) && ([101,102,108,110,112,116,130,157,158].includes(doc1.caccNo)) )
  { 
   assetdecrement = asmodel.findOne({accNo: da.accNo}, function(err, acc) {
@@ -544,6 +800,7 @@ mup= bmodel.findOne({accNo: ma.accNo}, function(err, bacc) {
         } 
         else{ 
             console.log("Updated Docs of Asset credit : ",da.accNo, docs); 
+            message+=" "+da.name+" has been Updated in Assets \n"
         } 
       
       });
@@ -552,6 +809,7 @@ mup= bmodel.findOne({accNo: ma.accNo}, function(err, bacc) {
   }else if(!acc)
   {
     console.log("Error: Account not found to decrement!")
+    message+="Attention!: Account not found to decrement! "+da.name+ "\n"
     return;
   }
  
@@ -572,15 +830,17 @@ if(assetdecrement)
           } 
           else{ 
               console.log("Updated Docs of Credit Liabililty : ",acc.name, docs); 
+              message+=" "+ma.name+" has been Updated in Liabilities \n"
           } 
         
         });
       }else if(acc.value<ma.value){
         console.log("ERROR: Account",acc.name," is < than ",ma.name)
+        message+="Attention!: Account",acc.name," is < than ",ma.name + "\n"
         return;
     
       }else{
-        console.log("ERROR: Account Not Found!  ")
+        message+="Attention!: Account",acc.name," is Not Found " + "\n"
         return;
     
       }
@@ -603,13 +863,14 @@ if(assetdecrement)
                 } 
                 else{ 
                     console.log("Updated Docs : ", docs); 
+                    message+=" Account",ma.name," is updated in Shareholder" + "\n"
                 } 
               
               });
           
             
             }else{
-              console.log("ERROR: Account NOT found!");
+              message+="Attention!: Account",acc.name," is Not Found " + "\n"
               return;
             }
           });
@@ -665,6 +926,7 @@ else  if(bacc) {console.log("Found!");
         console.log(err) 
     } 
     else{ 
+      message+="Updated Docs of debit balancesheet : ",ma.accNo,da.accNo + "\n"
         console.log("Updated Docs of debit balancesheet : ",ma.accNo,da.accNo, docs); 
     } 
   
@@ -676,7 +938,7 @@ else  if(bacc) {console.log("Found!");
     var bb= new bmodel(bal)
   bb.save(function (err) {
    if (err) console(err);
-   else console.log("Saved!")
+   else  message+="Saved  balancesheet : ",ma.accNo,da.accNo + "\n"
    // saved!
   });}
   
@@ -692,7 +954,7 @@ else  if(bacc) {console.log("Found!");
             console.log(err) 
         } 
         else{ 
-            console.log("Updated Docs of balanceshheet credit : ", docs); 
+          message+="Updated Docs of debit balancesheet : ",da.accNo,da.name + "\n"
         } 
       
       });  
@@ -706,12 +968,18 @@ else  if(bacc) {console.log("Found!");
       var bb= new bmodel(bal)
     bb.save(function (err) {
      if (err) console(err);
-     else console.log("Saved!")
+     else  message+="Updated Docs of debit balancesheet : ",da.name + "\n"
      // saved!
     });}
     });
-         
-   
+      if(message.length == 0 )
+      {  console.log("empty ya ytizzi")}   
+    res.status(200).json({
+      message:message
+    });
+    
+    message = ''
+    ma,da,ba,bal ={} 
           
 
        } 
@@ -1027,6 +1295,7 @@ app.use(function (err, req, res, next) {
    // Website you wish to allow to connect
    res.setHeader('Access-Control-Allow-Origin', 'https://localhost:3000/');
    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000/');
+   res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4000/');
    res.setHeader('Access-Control-Allow-Origin', 'https://zaccounting.netlify.app/');
    //res.setHeader('Access-Control-Allow-Origin', '*'); // to enable calls from every domain 
    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
