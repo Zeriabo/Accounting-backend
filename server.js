@@ -1292,11 +1292,13 @@ app.use(function (err, req, res, next) {
   console.error(err.message);
   if (!err.statusCode) err.statusCode = 500;
   res.status(err.statusCode).send(err.message);
+  
    // Website you wish to allow to connect
    res.setHeader('Access-Control-Allow-Origin', 'https://localhost:3000/');
    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000/');
-   res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4000/');
+  
    res.setHeader('Access-Control-Allow-Origin', 'https://zaccounting.netlify.app/');
+   res.setHeader('Access-Control-Allow-Origin', 'http://zaccounting.netlify.app/');
    //res.setHeader('Access-Control-Allow-Origin', '*'); // to enable calls from every domain 
    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
    // Request methods you wish to allow
