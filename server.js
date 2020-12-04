@@ -156,8 +156,8 @@ app.post("/intializeData",async function(req,res){
   const init2= {name:"Owner Capital",accNo:300,value:1000000}
  const init2b={accNo:300,mvalue:0,dvalue:1000000}
   const initb= {accNo:101,mvalue:1000000,dvalue:0}
-  var ls = new limodel(init2)
-    ls.save(function (err,d) {
+  var shareholderInit = new shmodel(init2)
+  shareholderInit.save(function (err,d) {
     if (err) console(err);
    else console.log(d)
 });
@@ -195,10 +195,10 @@ const DD="Debit"; CC="Credit";
 
  ma.name=doc1.debit;
  ma.accNo=doc1.daccNo;
- ma.value=doc1.dvalue;
+ ma.value=parseInt(doc1.dvalue);
  da.name=doc1.credit;
  da.accNo=doc1.caccNo;
- da.value=doc1.cvalue;
+ da.value=parseInt(doc1.cvalue);
 
 
 
@@ -812,20 +812,17 @@ mup= bmodel.findOne({accNo: ma.accNo}, function(err, bacc) {
     
               }
 
-      // acc.forEach(elem=> (elem.accNo == da.accNo)?elem.dvalue+parseInt(da.value):elem.mvalue+ parseInt(ma.value) )
-      // console.log(acc)
-      //You need to filter the array to get the liability and assets
-     // const liabilityAccount=[200,201,209,230.231]
+  
       const liabilityAccount = acc.filter(acc => acc.accNo == (200||201||209||230||231))
       const assetAccount = acc.filter(acc => acc.accNo == (101||108||110||112||157||130))
 
+//console.log(liabilityAccount[0].accNo)
 
-   //  console.log(acc[0].mvalue,acc[0].accNo,ma.accNo)
-        await  bmodel.updateOne({ $and: [{'accNo': assetAccount[0].accNo},{'mvalue':{$gte:parseInt(da.value) +assetAccount[0].dvalue}}]},
-        {$inc: { dvalue: da.value},}).exec()//.then(message+=" "+ma.name+" has been updated in the Balancesheet \n")
+        await  bmodel.findOneAndUpdate({ $and: [{'accNo': assetAccount[0].accNo},{'mvalue':{$gte:parseInt(da.value) +assetAccount[0].dvalue}}]},
+        {$inc: { dvalue: da.value},}).exec().then(message+=" "+ma.name+" has been updated in the Balancesheet \n")
           
-        await  bmodel.updateOne({ $and: [{'accNo': liabilityAccount[0].accNo},{'dvalue':{$gte:parseInt(ma.value) +liabilityAccount[0].mvalue}}]},
-        {$inc: { mvalue: ma.value},}).exec()//.then(message+=" "+da.name+" has been updated in the Balancesheet \n")
+        await  bmodel.findOneAndUpdate({ $and: [{'accNo': liabilityAccount[0].accNo},{'dvalue':{$gte:parseInt(ma.value) +liabilityAccount[0].mvalue}}]},
+        {$inc: { mvalue: ma.value},}).exec().then(message+=" "+da.name+" has been updated in the Balancesheet \n")
 
       
     cm.save(function (err) { //Saving credit table
@@ -861,407 +858,114 @@ mup= bmodel.findOne({accNo: ma.accNo}, function(err, bacc) {
     message = ''
     ma,da,ba,bal ={}  
      
- /*********************************************************************************************
-  * 
-  * You need to be sure if liabilities or shareholder AND Assets exist the perform The action
-  * 
-  */
-//  if([200,201,209,230,231].includes(doc1.daccNo))
-//  {
-   
-//  liu= limodel.findOne({accNo:ma.accNo}, function(err,acc){
-//     if(acc!=null && acc.value>=ma.value)
-//     { 
-//          limodel.findOneAndUpdate({'accNo': { $in: [ma.accNo]}},{$inc: { value: -ma.value},}, function (err, docs) { //update liabilities
-//       if (err){ 
-//           console.log(err) 
-//       }
-//       else{  
-       
-//           console.log("Updated Docs of Credit Liabililty : "+acc.name); 
-//           msg+='!Account '+ma.name+' has been updated in liabilities\n'
-//           /**********
-//            * Insert to Debit table
-//            */
-//           var dm =new dmodel(ma);
-//            /**********
-//            * Insert to credit table
-//            */       
-//           var cm = new cmodel(da);
-//            /**********
-//            * Insert to ledger table
-//            */
-//           var lm = new lemodel(ba);
 
-//         /*********
-//          * Creating balance sheet Data
-//          */
-//         bal.accName=ma.accName;
-//         bal.mvalue=0;
-//         bal.dvalue= ma.value;
-//      /***
-//       * try to find the account in balance sheet and update it
-//       */
-
-//     bmodel.findOneAndUpdate({'accNo': { $in: [ma.accNo]}},{$inc: {value: -ma.value},}, function(err, docs){
-//       if(docs == null)
-//       {
-//         var bb= new bmodel(bal)
-//         bb.save(function (err) {
-//         if (err) console(err);
-//         else console.log("Saved!")
-// // saved!
-//       });
-//       }
-//       if(err){
-//         console.log(err)
-//       }
-//       else{
-//         console.log("Updated i balancesheet")
-//         msg+='Updated in  balancesheet \n'
-//       }
-
-//     });
-// // var bb= new bmodel(bal)
-// // bb.save(function (err) {
-// // if (err) console(err);
-// // else console.log("Saved!")
-// // // saved!
-// // });
-// cm.save(function (err) {
-// if (err) console(err);
-// // saved!
-// });
-// dm.save(function (err) {
-// if (err) console(err);
-// // saved!
-// });
-// lm.save(function (err) {
-// if (err) console(err);
-// // saved!
-// });
-//       } 
-     
-//     }).then(
-//     message+='Updated'+ma.name+'\n')
-    
-//     } else if(acc.value<ma.value){
-//       console.log("ERROR: Account",acc.name+" is < than "+ma.name)
-//       msg+="Attention!: Account "+acc.name," is < than "+ma.name + "\n"
-//     console.log("haan")
-//       return;
-//     }
-
-
-//   }).then(console.log("finding Liability..."),(liu==null)?message+=" Attention! "+ma.name+" Account not exist \n":message+="Account will be updated \n")
-
- 
-
-
-//  }else if([300,311,320,330,332,350,360].includes(doc1.daccNo))
-//  {
-
-//   shmodel.findOneAndUpdate({'accNo': { $in: [ma.accNo]}},{$inc: { value: -ma.value}}, function (err, docs) { 
-    
-//         if (err){ 
-//             console.log(err) 
-//         } else  if(docs==null){console.log("docsnull")
-//         message+=" Account not found!"
-//       }
-//         else{ 
-//          bmodel.findOneAndUpdate({'accNo':{$in:[ma.accNo]}},{$inc:{mvalue: ma.value }}, function (err, docs) { 
-    
-//           if (err){ 
-//               console.log(err) 
-//           } else  {console.log("balancesheet updated")
-//           message+=" Balance sheet!"
-//         }})
-//             console.log("Updated Docs : ",ma.name); 
-//             message+=" Account "+ma.name+" is updated in Shareholder decremented by " +ma.value +"\n"
-//             updated = true
-//             var dm =new dmodel(ma);
-// var cm = new cmodel(da);
-
-// var lm = new lemodel(ba);
-
-// bal.accName=ma.accName;
-// bal.mvalue=0;
-// bal.dvalue= ma.value;
-// var bb= new bmodel(bal)
-
-// cm.save(function (err) {
-// if (err) console(err);
-// // saved!
-// });
-// dm.save(function (err) {
-// if (err) console(err);
-// // saved!
-// });
-// lm.save(function (err) {
-// if (err) console(err);
-// // saved!
-// });
-//         } 
-     
-//       }).then(console.log(updated),(updated!=true)? message+="Attention! "+ma.name+" Account not exist! to update": message+=ma.name+" Account is updated")
-  
-    
-    
-//     } 
-//     console.log(updated)
-// //console.log((shu!=null)?(await shu).execPopulate:(await liu).execPopulate())
-// if(updated)
-// {
-//   asmodel.findOne({accNo: da.accNo}, function(err, acc) {
-//     if(acc && (acc.value-da.value>=0)) {
-//       asmodel.findOneAndUpdate({'accNo': { $in: [da.accNo]}},{$inc: { value: -da.value},}, function (err, docs) { //update Assets
-//         if (err){ 
-//             console.log(err);
-//         } 
-//         else if (acc){ 
-         
-//             console.log("Updated Docs of Asset credit : ", da.name); 
-         
-           
-//         } 
-      
-//       })
-      
-//   }else 
-//   {
-//     console.log("Error: Account not found to decrement!")
-    
-//     message+="Attention!: Account "+da.name+ " not found to decrement! \n"
-//     return;
-//   }
- 
-//   }).then(message+=msg) 
-// }else {
-//   console.log("can't Update")
-// }
-
-   
-      
-           
-        
-
-    
-//     res.status(200).json({
-//       message:message
-//     });
-    
-//     message = ''
-//     ma,da,ba,bal ={} 
-          
 
        } 
       else if([200,201,209,230,231,300,311,320,330,332,350,360].includes(doc1.daccNo) && [200,201,209,230,231,300,311,320,330,332,350,360].includes(doc1.caccNo) )
-             {
-         // Account is a liability account
-        if([200,201,209,230,231].includes(doc1.daccNo))
-        {
-        
-          //find acc in liabilties if found decrement else message
-  lipromise=   limodel.findOne({accNo:ma.accNo}, function(err,liabilityupdate){
-    if (err){ 
-      console.log(err) 
-  } 
-        else    if(liabilityupdate && liabilityupdate.value>=ma.value)
-            {
-              limodel.updateOne({'accNo': { $in: [ma.accNo]}},{$inc: { value: ma.value},}, function (err, docs) { //update Assets
-                if (err){ 
-                    console.log(err) 
-                } 
-                else{ 
-                    console.log("Updated Docs of Debit Liabililty : ", docs); 
-                    
-                } 
+             {var bool = true
               
-              });
-            }else{
-             console.log(ma.accNo,ma.name," Not found to decrement! Or its smaller value")
-            
-             
-          return;
-          
-            }
-          });
-      
-         
-         
-        }
-        else if([300,311,320,330,332,350,360].includes(doc1.daccNo))
-               {
-                lipromise=  shmodel.findOne({accNo:ma.accNo}, function(err,liabilityupdate){
-                  if (err){ 
-                    console.log(err) 
-                } 
-                else  if(liabilityupdate && liabilityupdate.value>=ma.value)
-                  {
-                    shmodel.updateOne({'accNo': { $in: [ma.accNo]}},{$inc: { value: ma.value},}, function (err, docs) { 
-                      if (err){ 
-                          console.log(err) 
-                      } 
-                      else{ 
-                          console.log("Updated Docs of Shareholder : ", liabilityupdate.name,   docs); 
-                      } 
-                    
-                    });
-                
-                  
-                  }else{
-                    console.log(ma.name," Not found to decrement!",liabilityupdate)
-                    return;
-                    
-                  }
-                });
-              }   // Find liability and add it or Create it
-       
-           //this is the problem 
-           if(liabilityupdate){
-            if([200,201,209,230,231].includes(doc1.caccNo))
-            {
-             
-              //find acc in liabilties if found decrement else message
-              liabilityinsert=  limodel.findOne({accNo:da.accNo}, function(err,acc){
-                
-              if(acc!=null)
-                {
-                  limodel.updateOne({'accNo': { $in: [da.accNo]}},{$inc: { value: da.value},}, function (err, docs) { //update Assets
-                    if (err){ 
-                        console.log(err) 
-                    } 
-                    else{ 
-                        console.log("Updated Docs of Credit Liabililty : ",acc.name, docs); 
-                    } 
-                  
-                  });
-                }else {console.log("There is no ",da.accName)
-                  var lii = new limodel(da)
-                lii.save(function (err) {
-                    if (err) console(err);
-                    // saved!
-                });
-              
-                }if(err){console.log(err)}
-              });
-          
-             
-          
-            }      else if([300,311,320,330,332,350,360].includes(doc1.caccNo))
-            {
-              liabilityinsert=     shmodel.findOne({accNo:da.accNo}, function(err,acc){
-                if(err) console.log(err)
-               else if(acc!=null)
-               {
-                 shmodel.updateOne({'accNo': { $in: [da.accNo]}},{$inc: { value: da.value},}, function (err, docs) { 
-                   if (err){ 
-                       console.log(err) 
-                   } 
-                   else{ 
-                       console.log("Updated Docs : ", docs); 
-                   } 
-                 
-                 });
-             
                
-               }else{
-                var sh = new shmodel(da)
-                liabilityinsert=    sh.save(function (err) {
+               
+              var dm =new dmodel(ma);//Creation of debit Account
+              var cm = new cmodel(da); // Creation of credit Account
+              var lm = new lemodel(ba);//Creation of a ledger
+        const as=      await bmodel.find({accNo:{$in: [ ma.accNo]}}, async function (err, acc) { //you must check the value > 0
+                if(err){console.log(err)}
+                if(acc.length>0 &&  ma.value+acc[0].mvalue<=acc[0].dvalue) {
+                  if([200,201,209,230,231].includes(doc1.caccNo))
+                  {
+                   await  limodel.findOneAndUpdate({'accNo': { $in: [da.accNo]}},{$inc: { value: da.value},},{
+                   new:true,
+                   upsert:true  
+                   }).exec() //checked
+                 
+                  //else create
+               
+                  //find acc in shareholder if found increment else add
+                     } else if([300,311,320,330,332,350,360].includes(doc1.caccNo))
+                         {
+                            
+                             await  shmodel.findOneAndUpdate({'accNo': { $in: [da.accNo]}},{$inc: { value: da.value},},{
+                              new:true,
+                              upsert:true  
+                              }).exec()//checked
+                   
+                         // update else create
+                         }   
+            
+                
+                  if([200,201,209,230,231].includes(doc1.daccNo))
+                   {console.log(doc1.caccNo)
+                    await  limodel.findOneAndUpdate({'accNo': { $in: [ma.accNo]}},{$inc: { value: -ma.value},}).exec() //checked
+                      
+                   
+                
+                   //find acc in shareholder if found increment else add
+                      } else if([300,311,320,330,332,350,360].includes(doc1.daccNo))
+                          {
+                            
+                              await  shmodel.findOneAndUpdate({'accNo': { $in: [ma.accNo]}},{$inc: { value: -ma.value},}).exec()//checked
+                    
+                
+                          }
+            
+       
+            
+        await  bmodel.findOneAndUpdate({ $and: [{'accNo': ma.accNo}]},
+       {$inc: { mvalue: ma.value},}).exec().then(message+=" "+ma.name+" has been updated in the Balancesheet \n")
+                      
+       await  bmodel.findOneAndUpdate({ $and: [{'accNo': da.accNo}]},
+      {$inc: { dvalue: da.value,mvalue:0}},{
+        new:true,
+        upsert:true  
+        }).exec().then(message+=" "+da.name+" has been updated in the Balancesheet \n")
+            //else create
+                  
+                cm.save(function (err) { //Saving credit table
                   if (err) console(err);
                   // saved!
-              });
-                
-               }
-              });
-           }      }
-    
-           
-           if(liabilityinsert && liabilityupdate) { 
-     
-              var dm =new dmodel(ma);
-              var cm = new cmodel(da);
-        
-              var lm = new lemodel(ba);
-              bm.save(function (err) {
+                });
+                dm.save(function (err) {//Saving debit table
                 if (err) console(err);
-                else{console.log("inserted to Balancesheet")}
                 // saved!
-            });
-            cm.save(function (err) {
-              if (err) console(err);
-              else{console.log("inserted to Credit")}
-              // saved!
-          });
-          dm.save(function (err) {
-            if (err) console(err);
-            else{console.log("Inserted to debit")}
-            // saved!
-          });
-          lm.save(function (err) {
-            if (err) console(err);
-            else{console.log("Inserted to ledger")}
-            // saved!
-          });
-
-
-            }
-            
+                });
+                lm.save(function (err) {//Saving ledger table
+                if (err) console(err);
+                // saved!
+                });
+                
+               
+                
+                // }else if(!acc)
+                // {
+                //  message+=" "+ma.name+" doesn't exist in balancesheet \n"
+                // }
+                // else if (ma.value+acc[0].mvalue>acc[0].dvalue){
            
-           
-           mup= bmodel.findOne({accNo: ma.accNo}, function(err, bacc) {
-             if(err) {console.log(err);}
+                //  bool = false
+                //   console.log(bool)
           
-             else  if(bacc && bacc.mvalue>=ma.value) {
-              console.log("Found!");
-            bmodel.updateOne({'accNo': ma.accNo},{$inc: { mvalue: ma.value},}, function (err, docs) { //Update balancesheet
-              if (err){ 
-                  console.log(err) 
-              } 
-              else{ 
-                  console.log("Updated Docs of debit balancesheet : ",ma.accNo,da.accNo, docs); 
-              } 
+                //   console.log("Account value doesn't allow",acc[0].mvalue+ma.value+">"+acc[0].dvalue)
+                }else {
+                 message+=("Attention: Account Doesn't exist Or "+ma.name+" value must be less than Or Equal "+(parseInt(acc[0].dvalue)-parseInt(acc[0].mvalue)))
+                }
+              }).then(message+=" "+ma.name+" And "+da.name+bool+" has been Updated in balancesheet \n",(bool== false)?message+=("Attention! Failed: Account value doesn't allow "+acc[0].mvalue+'+'+ma.value+">"+  acc[0].dvalue +"\n"):'')
             
-            });
-            }else if(!bacc) {console.log("Not found ! ")}else if(bacc.mvalue>=ma.value){console.log("Too small")}
-            
-              });
-          if(mup)    {
-            dup= bmodel.findOne({accNo: da.accNo}, function(err, dacc) {
-              if(err){console.log(err)}
-              if(dacc  ) {
-                    
-          
-              bmodel.updateOne({'accNo':da.accNo},{$inc: { dvalue: da.value},}, function (err, docs) { //Update balancesheeet
-                if (err){ 
-                    console.log(err) 
-                } 
-                else{ 
-                    console.log("Updated Docs of balanceshheet credit : ", docs); 
-                } 
               
-              });  
-          
-          
-          
-            }else if(!dacc){ 
-              bal.accNo=da.accNo;
-              bal.accName=da.accName;
-              bal.mvalue=0;
-              bal.dvalue= da.value;
-              var bb= new bmodel(bal)
-            bb.save(function (err) {
-             if (err) console(err);
-             else console.log("Saved!")
-             // saved!
-            });}
-            });
-
+               
+               
+                if(message.length>0)
+                {res.status(200).json({
+                  message:message
+                });}
+                
+                message = ''
+                ma,da,ba,bal ={}  
+                 
             
-          }
-             
+       
             
-            }
+             }  
           });
         
 app.post("/activateBalance",function(req,res){ 
