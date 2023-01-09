@@ -12,7 +12,7 @@ const socketIo = require("socket.io");
 const index = require("./routes/index");
 app.use(index);
 const server = http.createServer(app);
-const io = socketIO(server);
+import { ledgerSchema, balanceSchema, accountSchema } from "./schema";
 
 let message = "";
 
@@ -68,58 +68,6 @@ const port = process.env.PORT || 4000;
 
 server.listen(port, () => console.log(`Listening on port ${port}`));
 
-const Schema = mongoose.Schema;
-var ResultBalanceSchema = new Schema({
-  name: {
-    type: String,
-  },
-  value: {
-    type: Number,
-  },
-});
-var accountSchema = new Schema({
-  name: {
-    type: String,
-  },
-  accNo: {
-    type: Number,
-  },
-  value: {
-    type: Number,
-  },
-});
-var ledgerSchema = new Schema({
-  mname: {
-    type: String,
-  },
-  dname: {
-    type: String,
-  },
-  maccNo: {
-    type: Number,
-  },
-  daccNo: {
-    type: Number,
-  },
-  mvalue: {
-    type: Number,
-  },
-  dvalue: {
-    type: Number,
-  },
-});
-var balanceSchema = new Schema({
-  accNo: {
-    type: Number,
-  },
-
-  mvalue: {
-    type: Number,
-  },
-  dvalue: {
-    type: Number,
-  },
-});
 var lemodel = mongoose.model("Ledger", ledgerSchema, "Ledger");
 var asmodel = mongoose.model("Assets", accountSchema, "Assets");
 var limodel = mongoose.model("Liability", accountSchema, "Liabilities");
