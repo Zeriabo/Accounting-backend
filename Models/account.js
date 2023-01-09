@@ -1,15 +1,14 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 var accountSchema = new Schema({
-    
-    name: {
-        type: String
-    },
-    accNo: {
-      type: Number
+  name: {
+    type: String,
   },
-    value: {
-        type: Number
-    }
+  accNo: {
+    type: Number,
+  },
+  value: {
+    type: Number,
+  },
 });
-module.exports = mongoose.model('account',accountSchema)
+module.exports = mongoose.model("account", accountSchema);

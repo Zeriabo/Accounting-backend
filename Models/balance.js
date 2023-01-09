@@ -1,24 +1,28 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-var BalanceSchema = new Schema({
-    
+var BalanceSchema = new Schema(
+  {
     mname: {
-        type: String
-  }, 
+      type: String,
+    },
     dname: {
-        type: String
-  },
+      type: String,
+    },
     maccNo: {
-      type: Number
-  },daccNo: {
-      type: Number
-  },
+      type: Number,
+    },
+    daccNo: {
+      type: Number,
+    },
     mvalue: {
-        type: Number
-  },dvalue: {
-      type: Number
+      type: Number,
+    },
+    dvalue: {
+      type: Number,
+    },
+  },
+  {
+    collection: "Balancesheet",
   }
-},{
-    collection : 'Balancesheet'
-})
-module.exports = mongoose.model('balance',BalanceSchema)
+);
+module.exports = mongoose.model("balance", BalanceSchema);

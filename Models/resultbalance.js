@@ -1,14 +1,16 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-var resultbalanceSchema = new Schema({
-    
+var resultbalanceSchema = new Schema(
+  {
     name: {
-        type: String
-  }, 
+      type: String,
+    },
     value: {
-        type: Number
+      type: Number,
+    },
+  },
+  {
+    collection: "balancesheetresult",
   }
-},{
-    collection : 'balancesheetresult'
-});
-module.exports = mongoose.model('resultbalance',resultbalanceSchema)
+);
+module.exports = mongoose.model("resultbalance", resultbalanceSchema);
