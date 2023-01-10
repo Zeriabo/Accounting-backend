@@ -1,3 +1,5 @@
+import mongoose from "mongoose";
+
 const Schema = mongoose.Schema;
 
 export const balanceSchema = new Schema({
@@ -11,3 +13,4 @@ export const balanceSchema = new Schema({
     type: Number,
   },
 });
+module.exports = router;

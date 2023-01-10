@@ -1,11 +1,10 @@
-let mongoose = reuire("mongoose"),
-  express = require("express"),
-  route = express.Router();
-
-let BalanceSchema = reuire("../Models/balance");
-
-router.route("/create-student").post((req, res, next) => {
-  studentSchema.create(req.body, (error, data) => {
+const express = require("express");
+const router = express.Router();
+const mongoose = require("mongoose");
+let BalanceSchema = require("../Models/balance");
+const Schema = mongoose.Schema;
+router.route("/create-balance").post((req, res, next) => {
+  BalanceSchema.create(req.body, (error, data) => {
     if (error) {
       return next(error);
     } else {
@@ -35,3 +34,4 @@ new Schema({
     type: Number,
   },
 });
+module.exports = router;

@@ -1,5 +1,7 @@
+import mongoose from "mongoose";
+
 const Schema = mongoose.Schema;
-export const ResultBalanceSchema = new Schema({
+export const ResultBalance_Schema = new Schema({
   name: {
     type: String,
   },
@@ -7,3 +9,4 @@ export const ResultBalanceSchema = new Schema({
     type: Number,
   },
 });
+module.exports = router;

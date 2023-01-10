@@ -1,3 +1,5 @@
+import mongoose from "mongoose";
+
 const Schema = mongoose.Schema;
 
 export const ledgerSchema = new Schema({
@@ -20,3 +22,4 @@ export const ledgerSchema = new Schema({
     type: Number,
   },
 });
+module.exports = router;
