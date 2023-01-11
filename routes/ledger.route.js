@@ -1,19 +1,19 @@
 const express = require("express");
 const router = express.Router();
-
+const LedgerController = require("../controller/LedgerController");
+const ledgerController = new LedgerController();
 let led = require("../Models/ledger");
 
-router.route("/savedata").post((req, res, next) => {
-  led.create(req.body, (error, data) => {
-    if (error) {
-      console.log(error);
-      return next(error);
-    } else {
-      console.log(data);
-      res.json(data);
-      res.send("item has been saved");
-    }
-  });
+router.route("/savedata").post((req, res) => {
+  const created = ledgerController.createLedger(req.body);
+
+  created
+    .then((ledger) => {
+      res.send(ledger);
+    })
+    .catch((err) => {
+      res.status(500).send(err);
+    });
 });
 
 module.exports = router;
