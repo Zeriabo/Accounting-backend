@@ -16,4 +16,15 @@ router.route("/savedata").post((req, res) => {
     });
 });
 
+router.route("/").get(async (req, res) => {
+  const ledgers = ledgerController.getLedgers();
+
+  ledgers
+    .then((ledger) => {
+      res.send(ledger);
+    })
+    .catch((err) => {
+      res.status(500).send(err);
+    });
+});
 module.exports = router;

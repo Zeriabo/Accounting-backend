@@ -11,6 +11,7 @@ const session = require("express-session");
 var ledgerRouter = require("./routes/ledger.route");
 var balancesheetRouter = require("./routes/balancesheet.route");
 var result = require("./routes/result.route");
+var assetsRouter = require("./routes/asset.route");
 let bodyParser = require("body-parser");
 dotenv.config({ path: ".env" });
 
@@ -65,6 +66,7 @@ app.use((req, res, next) => {
 app.use("/api/v1/ledger", ledgerRouter);
 app.use("/api/v1/balancesheet", balancesheetRouter);
 app.use("/api/v1/result", result);
+app.use("/api/v1/assets", assetsRouter);
 let dbConfig = require("./database/db");
 // Connecting mongoDB Database
 mongoose.Promise = global.Promise;

@@ -1,12 +1,14 @@
 const ledgerService = require("../service/LedgerService");
 const ledgerServiceInstance = new ledgerService();
 
-let asset = require("../Models/account");
+let asset = require("../Models/asset");
 let liabilities = require("../Models/account");
 let shareholderEquity = require("../Models/account");
 let credit = require("../Models/account");
 let debit = require("../Models/account");
 let balancesheet = require("../Models/balance");
+let led = require("../Models/ledger");
+const AssetController = require("./AssetController");
 
 class LedgerController {
   constructor() {}
@@ -59,7 +61,6 @@ class LedgerController {
           var dod = new liabilities(da);
           var cod = new credit(da);
           var aod = new balancesheet(ba);
-          var le = new led(ba);
         } else if (
           [101, 102, 108, 110, 112, 116, 130, 157, 158].includes(doc1.daccNo) &&
           [300, 311, 320, 330, 332, 350, 360].includes(doc1.caccNo)
@@ -69,7 +70,6 @@ class LedgerController {
           var dod = new shareholderEquity(da);
           var cod = new credit(da);
           var aod = new balancesheet(ba);
-          var le = new led(ba);
         } else if (
           [300, 311, 320, 330, 332, 350, 360].includes(doc1.daccNo) &&
           [101, 102, 108, 110, 112, 116, 130, 157, 158].includes(doc1.caccNo)
@@ -80,20 +80,19 @@ class LedgerController {
           var cod = new credit(da);
           var aod = new balancesheet(ba);
         }
-        mod.create(req.body, (error, data) => {
-          if (error) {
-            return next(error);
-          } else {
-            bod.create();
-            dod.create();
-            cod.create();
-            aod.create();
-          }
-        });
+
+        bod.create();
+        dod.create();
+        cod.create();
+        aod.create();
       }
     } catch (err) {
       res.status(500).send(err);
     }
+  }
+
+  async getLedgers() {
+    return ledgerServiceInstance.getAll();
   }
 }
 module.exports = LedgerController;

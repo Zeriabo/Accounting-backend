@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-var accountSchema = new Schema({
+
+var assetSchema = new Schema({
   name: {
     type: String,
   },
@@ -11,5 +12,5 @@ var accountSchema = new Schema({
     type: Number,
   },
 });
-var Account = mongoose.model("account", accountSchema);
-module.exports = Account;
+const asset = mongoose.model("Assets", assetSchema);
+module.exports = asset;
