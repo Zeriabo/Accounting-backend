@@ -1,6 +1,7 @@
 const ledgerService = require("../service/LedgerService");
 const ledgerServiceInstance = new ledgerService();
-
+const AssetService = require("../service/AssetsService");
+const assetServiceInstance = new AssetService();
 let asset = require("../Models/asset");
 let liabilities = require("../Models/account");
 let shareholderEquity = require("../Models/account");
@@ -22,6 +23,7 @@ class LedgerController {
       dvalue: ledger.dvalue,
       cvalue: ledger.cvalue,
     };
+    console.log(doc1);
     const DD = "Debit";
     const CC = "Credit";
     const ma = {};
@@ -43,7 +45,7 @@ class LedgerController {
     ba.dvalue = doc1.cvalue;
 
     try {
-      const registered = await ledgerServiceInstance.registerLedger(ledger);
+      const registered = await ledgerServiceInstance.registerLedger(doc1);
 
       if (registered.success) {
         if (
@@ -56,38 +58,44 @@ class LedgerController {
           ) ||
             [200, 201, 209, 230, 231].includes(doc1.caccNo))
         ) {
-          var mod = new asset(ma);
-          var bod = new debit(ma);
-          var dod = new liabilities(da);
-          var cod = new credit(da);
-          var aod = new balancesheet(ba);
+          var assetDebit = new asset(ma);
+          var debitAmount = new debit(ma);
+          var liabilityCredit = new liabilities(da);
+          var creditAmount = new credit(da);
+          var balanceSheet = new balancesheet(ba);
         } else if (
           [101, 102, 108, 110, 112, 116, 130, 157, 158].includes(doc1.daccNo) &&
           [300, 311, 320, 330, 332, 350, 360].includes(doc1.caccNo)
         ) {
-          var mod = new asset(ma);
-          var bod = new debit(ma);
-          var dod = new shareholderEquity(da);
-          var cod = new credit(da);
-          var aod = new balancesheet(ba);
+          var assetDebit = new asset(ma);
+          var debitAmount = new debit(ma);
+          var liabilityCredit = new shareholderEquity(da);
+          var creditAmount = new credit(da);
+          var balanceSheet = new balancesheet(ba);
         } else if (
           [300, 311, 320, 330, 332, 350, 360].includes(doc1.daccNo) &&
           [101, 102, 108, 110, 112, 116, 130, 157, 158].includes(doc1.caccNo)
         ) {
-          var mod = new asset(ma);
-          var bod = new debit(ma);
-          var dod = new liabilities(da);
-          var cod = new credit(da);
-          var aod = new balancesheet(ba);
+          var assetDebit = new asset(ma);
+          var debitAmount = new debit(ma);
+          var liabilityCredit = new liabilities(da);
+          var creditAmount = new credit(da);
+          var balanceSheet = new balancesheet(ba);
         }
 
-        bod.create();
-        dod.create();
-        cod.create();
-        aod.create();
+        // await assetDebit.save();
+        // await debitAmount.save();
+        // await liabilityCredit.save();
+        // await creditAmount.save();
+        // await balanceSheet.save();
+        const assetToUpdate = await assetServiceInstance.updateAsset(
+          assetDebit
+        );
+        return assetToUpdate.success;
       }
     } catch (err) {
-      res.status(500).send(err);
+      console.log(err);
+      return err;
     }
   }
 

@@ -1,4 +1,5 @@
 let ledgerModel = require("../Models/ledger");
+
 class LedgerService {
   constructor() {
     // Create instance of Data Access layer using our desired model
