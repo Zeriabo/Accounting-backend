@@ -1,10 +1,7 @@
 let ledgerModel = require("../Models/ledger");
 
 class LedgerService {
-  constructor() {
-    // Create instance of Data Access layer using our desired model
-    // this.MongooseServiceInstance = new MongooseService(ledgerModel);
-  }
+  constructor() {}
   async getAll() {
     try {
       const result = await ledgerModel.find({});
@@ -14,9 +11,18 @@ class LedgerService {
       return { success: false, error: err };
     }
   }
-  async registerLedger(ledgerToCreate) {
+  async registerLedger(creditModel, debitModel, ledger) {
     try {
-      const result = await ledgerModel.create(ledgerToCreate);
+      creditModel.save(function (err) {
+        if (err) console(err);
+      });
+      debitModel.save(function (err) {
+        if (err) console(err);
+      });
+      ledger.save(function (err) {
+        if (err) console(err);
+      });
+      // const result = await ledgerModel.create(ledgerToCreate);
 
       return { success: true, body: result };
     } catch (err) {
@@ -24,15 +30,7 @@ class LedgerService {
     }
   }
 }
+const registerLedger = async (ledger) => {};
 module.exports = LedgerService;
-// const registerLedger = async (ledger) => {
-//   const created = await led.create(ledger, (error, data) => {
-//     if (error) {
-//       return next(error);
-//     } else {
-//       return true;
-//     }
-//   });
-// };
 
 // module.exports = { registerLedger };

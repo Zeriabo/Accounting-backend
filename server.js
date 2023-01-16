@@ -37,6 +37,7 @@ const port = process.env.PORT || 5001;
 
 const env = process.env;
 app.use(cors());
+app.options("*", cors());
 app.use(
   session({
     secret: "eminem", // session secret
