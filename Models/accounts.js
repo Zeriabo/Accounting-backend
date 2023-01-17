@@ -11,5 +11,5 @@ var accountSchema = new Schema({
     type: Number,
   },
 });
-var Account = mongoose.model("account", accountSchema);
+var Account = mongoose.model("Accounts", accountSchema);
 module.exports = Account;

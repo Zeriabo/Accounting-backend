@@ -3,11 +3,11 @@ const ledgerServiceInstance = new ledgerService();
 const AssetService = require("../service/AssetsService");
 const assetServiceInstance = new AssetService();
 let asset = require("../Models/asset");
-let liabilities = require("../Models/account");
-let shareholderEquity = require("../Models/account");
-let credit = require("../Models/account");
-let debit = require("../Models/account");
-let balancesheet = require("../Models/balance");
+let liabilities = require("../Models/accounts");
+let shareholderEquity = require("../Models/accounts");
+let credit = require("../Models/accounts");
+let debit = require("../Models/accounts");
+let balancesheet = require("../Models/balancesheet");
 let led = require("../Models/ledger");
 const AssetController = require("./AssetController");
 

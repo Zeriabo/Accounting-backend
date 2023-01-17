@@ -8,11 +8,18 @@ const { fileURLToPath } = require("url");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
-var ledgerRouter = require("./routes/ledger.route");
-var balancesheetRouter = require("./routes/balancesheet.route");
-var result = require("./routes/result.route");
-var assetsRouter = require("./routes/asset.route");
+const ledgerRouter = require("./routes/ledger.route");
+const balancesheetRouter = require("./routes/balancesheet.route");
+const result = require("./routes/result.route");
+const assetsRouter = require("./routes/asset.route");
 let bodyParser = require("body-parser");
+let ledgerModel = require("./Models/ledger");
+let assetsModel = require("./Models/asset");
+let balanceModel = require("./Models/balancesheet");
+let account = require("./Models/accounts");
+let liabilities = require("./Models/liabilities");
+let shareholderEquity = require("./Models/ShareholdersEquity");
+
 dotenv.config({ path: ".env" });
 
 const app = express();
@@ -92,6 +99,42 @@ app.use(
     extended: true,
   })
 );
+
+app.post("/intializedata", async function (req, res) {
+  await ledgerModel.deleteMany({});
+  await assetsModel.deleteMany({});
+  await account.deleteMany({});
+  await liabilities.deleteMany({});
+  await shareholderEquity.deleteMany({});
+  await balanceModel.deleteMany({});
+  const init = { name: "Bank/Cash at Bank", accNo: 101, value: 1000000 };
+  const init2 = { name: "Owner Capital", accNo: 300, value: 1000000 };
+  const init2b = { accNo: 300, mvalue: 0, dvalue: 1000000 };
+  const initb = { accNo: 101, mvalue: 1000000, dvalue: 0 };
+  var shareholderInit = new shmodel(init2);
+  shareholderInit.save(function (err, d) {
+    if (err) console(err);
+    else console.log(d);
+  });
+  var abl = new bmodel(init2b);
+  abl.save(function (err, d) {
+    if (err) console(err);
+    else console.log(d);
+    // saved!
+  });
+  var as = new asmodel(init);
+  as.save(function (err, d) {
+    if (err) console(err);
+    else console.log(d);
+  });
+
+  var ab = new bmodel(initb);
+  ab.save(function (err, d) {
+    if (err) console(err);
+    else console.log(d);
+    // saved!
+  });
+});
 
 module.exports = { app };
 

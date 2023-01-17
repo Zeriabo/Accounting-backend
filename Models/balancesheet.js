@@ -25,4 +25,4 @@ var BalanceSchema = new Schema(
     collection: "Balancesheet",
   }
 );
-module.exports = mongoose.model("balance", BalanceSchema);
+module.exports = mongoose.model("Balancesheet", BalanceSchema);

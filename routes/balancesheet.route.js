@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
-let BalanceSchema = require("../Models/balance");
+let BalanceSchema = require("../Models/balancesheet");
 const Schema = mongoose.Schema;
 router.route("/create-balance").post((req, res, next) => {
   BalanceSchema.create(req.body, (error, data) => {
