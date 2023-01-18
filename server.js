@@ -111,24 +111,24 @@ app.post("/intializedata", async function (req, res) {
   const init2 = { name: "Owner Capital", accNo: 300, value: 1000000 };
   const init2b = { accNo: 300, mvalue: 0, dvalue: 1000000 };
   const initb = { accNo: 101, mvalue: 1000000, dvalue: 0 };
-  var shareholderInit = new shmodel(init2);
+  var shareholderInit = new shareholderEquity(init2);
   shareholderInit.save(function (err, d) {
     if (err) console(err);
     else console.log(d);
   });
-  var abl = new bmodel(init2b);
+  var abl = new balanceModel(init2b);
   abl.save(function (err, d) {
     if (err) console(err);
     else console.log(d);
     // saved!
   });
-  var as = new asmodel(init);
+  var as = new assetsModel(init);
   as.save(function (err, d) {
     if (err) console(err);
     else console.log(d);
   });
 
-  var ab = new bmodel(initb);
+  var ab = new balanceModel(initb);
   ab.save(function (err, d) {
     if (err) console(err);
     else console.log(d);
@@ -190,7 +190,7 @@ module.exports = { app };
 // server.listen(port, () => console.log(`Listening on port ${port}`));
 
 // var lemodel = mongoose.model("Ledger", ledgerSchema, "Ledger");
-// var asmodel = mongoose.model("Assets", accountSchema, "Assets");
+// var assetsModel = mongoose.model("Assets", accountSchema, "Assets");
 // var limodel = mongoose.model("Liability", accountSchema, "Liabilities");
 // var shmodel = mongoose.model(
 //   "ShareholderEquity",
@@ -206,7 +206,7 @@ module.exports = { app };
 
 // app.post("/emptydata", async function (re, res) {
 //   await lemodel.deleteMany({});
-//   await asmodel.deleteMany({});
+//   await assetsModel.deleteMany({});
 //   await limodel.deleteMany({});
 //   await shmodel.deleteMany({});
 //   await cmodel.deleteMany({});
@@ -219,7 +219,7 @@ module.exports = { app };
 
 // app.post("/intializeData", async function (req, res) {
 //   await lemodel.deleteMany({});
-//   await asmodel.deleteMany({});
+//   await assetsModel.deleteMany({});
 //   await limodel.deleteMany({});
 //   await shmodel.deleteMany({});
 //   await cmodel.deleteMany({});
@@ -240,7 +240,7 @@ module.exports = { app };
 //     else console.log(d);
 //     // saved!
 //   });
-//   var as = new asmodel(init);
+//   var as = new assetsModel(init);
 //   as.save(function (err, d) {
 //     if (err) console(err);
 //     else console.log(d);
@@ -357,9 +357,9 @@ module.exports = { app };
 //                 }
 //               }
 //             );
-//             asmodel.findOne({ accNo: ma.accNo }, function (err, macc) {
+//             assetsModel.findOne({ accNo: ma.accNo }, function (err, macc) {
 //               if (macc) {
-//                 asmodel.updateOne(
+//                 assetsModel.updateOne(
 //                   { accNo: { $in: [ma.accNo] } },
 //                   { $inc: { value: ma.value } },
 //                   function (err, docs) {
@@ -378,7 +378,7 @@ module.exports = { app };
 //                   }
 //                 );
 //               } else if (macc.length == 0) {
-//                 var as = new asmodel(ma);
+//                 var as = new assetsModel(ma);
 //                 assetinsert = as.save(function (err, res) {
 //                   if (err) console(err);
 //                   else res.status(200).send("Assets has been Updated");
@@ -413,9 +413,9 @@ module.exports = { app };
 //                 }
 //               }
 //             );
-//             asmodel.findOne({ accNo: ma.accNo }, function (err, macc) {
+//             assetsModel.findOne({ accNo: ma.accNo }, function (err, macc) {
 //               if (macc) {
-//                 asmodel.updateOne(
+//                 assetsModel.updateOne(
 //                   { accNo: { $in: [ma.accNo] } },
 //                   { $inc: { value: ma.value } },
 //                   function (err, docs) {
@@ -434,7 +434,7 @@ module.exports = { app };
 //                   }
 //                 );
 //               } else if (macc.length == 0) {
-//                 var as = new asmodel(ma);
+//                 var as = new assetsModel(ma);
 //                 assetinsert = as.save(function (err, res) {
 //                   if (err) console(err);
 //                   else res.status(200).send("Assets has been Updated");
@@ -573,11 +573,11 @@ module.exports = { app };
 //       // saved!
 //     });
 
-//     creditAssetupdate = await asmodel
+//     creditAssetupdate = await assetsModel
 //       .findOne({ accNo: da.accNo }, function (err, dacc) {
 //         if (dacc != null) {
 //           if (dacc.length > 0) {
-//             asmodel
+//             assetsModel
 //               .updateOne(
 //                 { accNo: { $in: [da.accNo] } },
 //                 { $inc: { value: -da.value } },
@@ -606,11 +606,11 @@ module.exports = { app };
 //         (message +=
 //           "Credit Account " + da.name.toString() + " is Decremented ! \n")
 //       );
-//     DebitAssetupdate = await asmodel.findOne(
+//     DebitAssetupdate = await assetsModel.findOne(
 //       { accNo: ma.accNo },
 //       function (err, macc) {
 //         if (macc) {
-//           asmodel
+//           assetsModel
 //             .updateOne(
 //               { accNo: { $in: [ma.accNo] } },
 //               { $inc: { value: ma.value } },
@@ -629,7 +629,7 @@ module.exports = { app };
 //             );
 //         } else if (macc == null) {
 //           message += "Debit Asset" + ma.name + " is Created\n";
-//           var as = new asmodel(ma);
+//           var as = new assetsModel(ma);
 //           assetinsert = as.save(function (err, res) {
 //             if (err) console(err);
 //           });
@@ -750,7 +750,7 @@ module.exports = { app };
 //       // saved!
 //     });
 //     console.log(ma.value);
-//     asmodel
+//     assetsModel
 //       .updateOne(
 //         { accNo: { $in: [ma.accNo] } },
 //         { $inc: { value: ma.value } },
@@ -759,7 +759,7 @@ module.exports = { app };
 //           if (err) {
 //             console.log(err);
 //           } else if (docs.nModified == 0) {
-//             var as = new asmodel(ma);
+//             var as = new assetsModel(ma);
 //             as.save(function (err) {
 //               if (err) console.log(err);
 //               else
@@ -939,7 +939,7 @@ module.exports = { app };
 //             console.log(err);
 //           }
 //           if (acc.length > 0) {
-//             await asmodel
+//             await assetsModel
 //               .findOneAndUpdate(
 //                 { accNo: { $in: [da.accNo] } },
 //                 { $inc: { value: -da.value } }
