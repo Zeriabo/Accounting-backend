@@ -45,6 +45,7 @@ class LedgerController {
     ba.dvalue = doc1.cvalue;
 
     try {
+      //creditModel, debitModel, ledgerModel)
       const registered = await ledgerServiceInstance.registerLedger(doc1);
 
       if (registered.success) {
@@ -83,11 +84,11 @@ class LedgerController {
           var balanceSheet = new balancesheet(ba);
         }
 
-        // await assetDebit.save();
-        // await debitAmount.save();
-        // await liabilityCredit.save();
-        // await creditAmount.save();
-        // await balanceSheet.save();
+        await assetDebit.save();
+        await debitAmount.save();
+        await liabilityCredit.save();
+        await creditAmount.save();
+        await balanceSheet.save();
         const assetToUpdate = await assetServiceInstance.updateAsset(
           assetDebit
         );

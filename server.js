@@ -28,36 +28,27 @@ const whitelist = process.env.WHITELISTED_DOMAINS
   ? process.env.WHITELISTED_DOMAINS.split(",")
   : [];
 
-const corsOptions = {
-  origin: function (origin, callback) {
-    if (!origin || whitelist.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  credentials: true,
-};
-app.use(cors(corsOptions));
+// const corsOptions = {
+//   origin: function (origin, callback) {
+//     if (!origin || whitelist.indexOf(origin) !== -1) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error("Not allowed by CORS"));
+//     }
+//   },
+//   credentials: true,
+// };
+app.use(cors());
+// Express Route
 
 const port = process.env.PORT || 5001;
 
 const env = process.env;
-app.use(cors());
+
 app.options("*", cors());
-app.use(
-  session({
-    secret: "eminem", // session secret
-    name: "sid",
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      httpOnly: true,
-      expires: new Date(Date.now() + 60 * 60 * 1000 * 24),
-    },
-  })
-);
 app.use(express.static("public"));
+app.use(bodyParser.json({ limit: "5mb" }));
+app.use(bodyParser.urlencoded({ extended: true, limit: "5mb" }));
 app.set("view engine", "pug");
 //passport.use(googleStrategy)
 // Express configuration

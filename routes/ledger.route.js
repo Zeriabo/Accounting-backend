@@ -6,7 +6,7 @@ let led = require("../Models/ledger");
 
 router.route("/savedata").post((req, res) => {
   try {
-    return ledgerController.createLedger(req.body);
+    return ledgerController.createLedger(req.body.data);
   } catch (err) {
     res.status(500).send(err);
   }
