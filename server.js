@@ -50,13 +50,15 @@ app.use(express.static("public"));
 app.use(bodyParser.json({ limit: "5mb" }));
 app.use(bodyParser.urlencoded({ extended: true, limit: "5mb" }));
 app.set("view engine", "pug");
-//passport.use(googleStrategy)
+
 // Express configuration
 app.set("port", port);
+
 // Global middleware
 app.use(express.json());
 app.use(cookieParser());
 app.listen(port, () => console.log(`Listening on port ${port}`));
+
 // Set up routers
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
@@ -67,6 +69,7 @@ app.use("/api/v1/balancesheet", balancesheetRouter);
 app.use("/api/v1/result", result);
 app.use("/api/v1/assets", assetsRouter);
 let dbConfig = require("./database/db");
+
 // Connecting mongoDB Database
 mongoose.Promise = global.Promise;
 mongoose
