@@ -741,7 +741,6 @@ app.post("/savedata", async function (req, res) {
         .then(
           (message += " " + da.name + " has been Updated in the Liabilities \n")
         );
-
       //find acc in shareholder if found increment else add
     } else if ([300, 311, 320, 330, 332, 350, 360].includes(doc1.caccNo)) {
       shmodel
