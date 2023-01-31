@@ -7,5 +7,4 @@ class AssetController {
     return assetServiceInstance.getAll();
   }
 }
-
 module.exports = AssetController;
