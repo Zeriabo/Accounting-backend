@@ -1,10 +1,10 @@
 let asset = require("../Models/asset");
-const assetService = require("../service/AssetsService");
-const assetServiceInstance = new assetService();
+const balanceSheetervice = require("../service/BalanceSheetService");
+const balanceSheetServiceInstance = new balanceSheetervice();
 class BalanceSheetController {
   constructor() {}
-  async selectAssets() {
-    return assetServiceInstance.getAll();
+  async getBalanceSheet() {
+    return balanceSheetServiceInstance.getAll();
   }
 }
 module.exports = BalanceSheetController;
