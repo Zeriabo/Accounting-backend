@@ -14,8 +14,7 @@ router.route("/").get(async (req, res) => {
   const ledgers = ledgerController.getLedgers();
   ledgers
     .then((ledger) => {
-      res.send(ledger);
-      t;
+      res.status(200).send(ledger);
     })
     .catch((err) => {
       res.status(500).send(err);
