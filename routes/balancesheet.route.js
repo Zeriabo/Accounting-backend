@@ -12,8 +12,8 @@ let creditSchema = require("../Models/credit");
 
 var cmodel = mongoose.model("Credit");
 var dmodel = mongoose.model("Debit");
-var asmodel = mongoose.model("Debit");
-var bmodel = mongoose.model("Asset");
+var asmodel = mongoose.model("Asset");
+var bmodel = mongoose.model("Balancesheet");
 var ledgerModel = mongoose.model("Ledger");
 
 var shmodel = mongoose.model("ShareholdersEquity");
@@ -43,12 +43,21 @@ router.route("/intializeData").get(async (req, res, next) => {
   const init2 = { name: "Owner Capital", accNo: 300, value: 1000000 };
   const init2b = { accNo: 300, mvalue: 0, dvalue: 1000000 };
   const initb = { accNo: 101, mvalue: 1000000, dvalue: 0 };
+  const binit = {
+    mname: "Bank/Cash at Bank",
+    dname: "Owner Capital",
+    maccNo: 101,
+    daccNo: 300,
+    mvalue: 1000000,
+    dvalue: 1000000,
+  };
+
   var shareholderInit = new shmodel(init2);
   shareholderInit.save(function (err, d) {
     if (err) console(err);
     else console.log(d);
   });
-  var abl = new bmodel(init2b);
+  var abl = new bmodel(binit);
   abl.save(function (err, d) {
     if (err) console(err);
     else console.log(d);
@@ -59,12 +68,6 @@ router.route("/intializeData").get(async (req, res, next) => {
     else console.log(d);
   });
 
-  var ab = new bmodel(initb);
-  ab.save(function (err, d) {
-    if (err) console(err);
-    else console.log(d);
-    // saved!
-  });
   res.send(true);
 });
 new Schema({
