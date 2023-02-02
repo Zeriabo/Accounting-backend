@@ -4,9 +4,37 @@ class BalanceSheetService {
   constructor() {}
   async getAll() {
     try {
-      const result = await BalanceSheetModel.find({});
-
-      return { success: true, body: result };
+      const result = await BalanceSheetModel.aggregate(
+        [
+          {
+            $project: {
+              _id: "$accNo",
+              mvalue: "$mvalue",
+              cvalue: "$dvalue",
+            },
+          },
+          {
+            $addFields: {
+              Result: {
+                $subtract:
+                  "$dvalue" > "$mvalue"
+                    ? ["$dvalue", "$mvalue"]
+                    : ["$mvalue", "$dvalue"],
+              },
+            },
+          },
+        ],
+        (err, book) => {
+          if (err) {
+            return { success: false, error: err };
+          } else if (book.length == 0) {
+            return { success: true, data: [] };
+          } else {
+            return { success: true, data: book };
+          }
+        }
+      );
+      return result;
     } catch (err) {
       return { success: false, error: err };
     }

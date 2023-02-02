@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
+const BalanceSheetController = require("../controller/BalanceSheetController");
 let BalanceSchema = require("../Models/balancesheet");
 const Schema = mongoose.Schema;
 router.route("/create-balance").post((req, res, next) => {
@@ -8,20 +9,13 @@ router.route("/create-balance").post((req, res, next) => {
     if (error) {
       return next(error);
     } else {
-      console.log(data);
       res.json(data);
     }
   });
 });
-router.route("/").get((req, res, next) => {
-  BalanceSchema.create(req.body, (error, data) => {
-    if (error) {
-      return next(error);
-    } else {
-      console.log(data);
-      res.json(data);
-    }
-  });
+router.route("/").get(async (req, res, next) => {
+  const data = await BalanceSheetController.getBalanceSheet(req.body);
+  res.send(data);
 });
 
 new Schema({
