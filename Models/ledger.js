@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
-var ledgerSchema = new Schema(
+const ledgerSchema = mongoose.Schema;
+
+var Ledger = new ledgerSchema(
   {
     mname: {
       type: String,
@@ -25,4 +26,5 @@ var ledgerSchema = new Schema(
     collection: "Ledger",
   }
 );
-module.exports = mongoose.model("Ledger", ledgerSchema);
+var Ledger = mongoose.model("Ledger", Ledger);
+module.exports = Ledger;

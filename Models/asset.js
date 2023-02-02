@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+const assetSchema = mongoose.Schema;
 
-var assetSchema = new Schema(
+var Asset = new assetSchema(
   {
     name: {
       type: String,
@@ -17,5 +17,5 @@ var assetSchema = new Schema(
     collection: "Assets",
   }
 );
-const asset = mongoose.model("Assets", assetSchema);
-module.exports = asset;
+var Asset = mongoose.model("Asset", Asset);
+module.exports = Asset;

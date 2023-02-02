@@ -22,7 +22,6 @@ class LedgerService {
       ledger.save(function (err) {
         if (err) console(err);
       });
-      // const result = await ledgerModel.create(ledgerToCreate);
 
       return { success: true, body: result };
     } catch (err) {
@@ -30,7 +29,5 @@ class LedgerService {
     }
   }
 }
-const registerLedger = async (ledger) => {};
-module.exports = LedgerService;
 
-// module.exports = { registerLedger };
+module.exports = LedgerService;

@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+const debitSchema = mongoose.Schema;
 
-var debitSchema = new Schema(
+var Debit = new debitSchema(
   {
     name: {
       type: String,
@@ -17,5 +17,5 @@ var debitSchema = new Schema(
     collection: "Debit",
   }
 );
-const debit = mongoose.model("Debit", assetSchema);
-module.exports = debit;
+var Debit = mongoose.model("Debit", Debit);
+module.exports = Debit;

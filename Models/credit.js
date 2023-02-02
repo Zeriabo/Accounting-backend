@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+const creditSchema = mongoose.Schema;
 
-var creditSchema = new Schema(
+var Credit = new creditSchema(
   {
     name: {
       type: String,
@@ -17,5 +17,5 @@ var creditSchema = new Schema(
     collection: "Credit",
   }
 );
-const credit = mongoose.model("Credit", assetSchema);
-module.exports = credit;
+var Credit = mongoose.model("Credit", Credit);
+module.exports = Credit;
