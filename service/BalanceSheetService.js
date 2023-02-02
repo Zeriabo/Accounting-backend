@@ -9,18 +9,9 @@ class BalanceSheetService {
           {
             $project: {
               _id: "$accNo",
-              mvalue: "$mvalue",
-              cvalue: "$dvalue",
-            },
-          },
-          {
-            $addFields: {
-              Result: {
-                $subtract:
-                  "$dvalue" > "$mvalue"
-                    ? ["$dvalue", "$mvalue"]
-                    : ["$mvalue", "$dvalue"],
-              },
+              value: "$value",
+              name: "$name",
+              accNo: "$accNo",
             },
           },
         ],

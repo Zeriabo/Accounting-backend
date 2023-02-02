@@ -2,22 +2,13 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 var BalanceSchema = new Schema(
   {
-    mname: {
+    name: {
       type: String,
     },
-    dname: {
-      type: String,
-    },
-    maccNo: {
+    accNo: {
       type: Number,
     },
-    daccNo: {
-      type: Number,
-    },
-    mvalue: {
-      type: Number,
-    },
-    dvalue: {
+    value: {
       type: Number,
     },
   },

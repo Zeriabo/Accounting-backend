@@ -44,21 +44,27 @@ router.route("/intializeData").get(async (req, res, next) => {
   const init2b = { accNo: 300, mvalue: 0, dvalue: 1000000 };
   const initb = { accNo: 101, mvalue: 1000000, dvalue: 0 };
   const binit = {
-    mname: "Bank/Cash at Bank",
-    dname: "Owner Capital",
-    maccNo: 101,
-    daccNo: 300,
-    mvalue: 1000000,
-    dvalue: 1000000,
+    name: "Bank/Cash at Bank",
+    accNo: 101,
+    value: 1000000,
   };
-
+  const binit2 = {
+    name: "Owner Capital",
+    accNo: 300,
+    value: 1000000,
+  };
   var shareholderInit = new shmodel(init2);
   shareholderInit.save(function (err, d) {
     if (err) console(err);
     else console.log(d);
   });
   var abl = new bmodel(binit);
+  var abl2 = new bmodel(binit2);
   abl.save(function (err, d) {
+    if (err) console(err);
+    else console.log(d);
+  });
+  abl2.save(function (err, d) {
     if (err) console(err);
     else console.log(d);
   });
