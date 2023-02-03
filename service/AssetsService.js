@@ -22,8 +22,14 @@ class AssetsService {
   }
   async save(asset) {
     try {
-      const result = await assetModel.save(asset);
-      return { success: true, body: result };
+      const found = assetModel.find({ accNo: asset.accNo });
+      if (!found) {
+        const result = await assetModel.save(asset);
+        return { success: true, body: result };
+      } else {
+        const result = await assetModel.updateOne(asset);
+        return { success: true, body: result };
+      }
     } catch (err) {
       return { success: false, error: err };
     }
