@@ -10,6 +10,10 @@ const getBalanceSheet = async (req, res, next) => {
     throw new Error(balance.error);
   }
 };
+const initializeData = async (req, res, next) => {
+  await balanceSheetServiceInstance.initializeData();
+};
 module.exports = {
   getBalanceSheet,
+  initializeData,
 };

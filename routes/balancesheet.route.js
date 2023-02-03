@@ -3,20 +3,6 @@ const router = express.Router();
 const mongoose = require("mongoose");
 const BalanceSheetController = require("../controller/BalanceSheetController");
 let BalanceSchema = require("../Models/balancesheet");
-let AssetSchema = require("../Models/asset");
-let LedgerSchema = require("../Models/ledger");
-let ShareholderSchema = require("../Models/ShareholdersEquity");
-let accountSchema = require("../Models/accounts");
-let debitSchema = require("../Models/debit");
-let creditSchema = require("../Models/credit");
-
-var cmodel = mongoose.model("Credit");
-var dmodel = mongoose.model("Debit");
-var asmodel = mongoose.model("Asset");
-var bmodel = mongoose.model("Balancesheet");
-var ledgerModel = mongoose.model("Ledger");
-
-var shmodel = mongoose.model("ShareholdersEquity");
 
 const Schema = mongoose.Schema;
 router.route("/create-balance").post((req, res, next) => {
@@ -33,47 +19,7 @@ router.route("/").get(async (req, res, next) => {
   res.send(data);
 });
 router.route("/intializeData").get(async (req, res, next) => {
-  await asmodel.deleteMany({});
-  await ledgerModel.deleteMany({});
-  await shmodel.deleteMany({});
-  await cmodel.deleteMany({});
-  await dmodel.deleteMany({});
-  await bmodel.deleteMany({});
-  const init = { name: "Bank/Cash at Bank", accNo: 101, value: 1000000 };
-  const init2 = { name: "Owner Capital", accNo: 300, value: 1000000 };
-  const init2b = { accNo: 300, mvalue: 0, dvalue: 1000000 };
-  const initb = { accNo: 101, mvalue: 1000000, dvalue: 0 };
-  const binit = {
-    name: "Bank/Cash at Bank",
-    accNo: 101,
-    value: 1000000,
-  };
-  const binit2 = {
-    name: "Owner Capital",
-    accNo: 300,
-    value: 1000000,
-  };
-  var shareholderInit = new shmodel(init2);
-  shareholderInit.save(function (err, d) {
-    if (err) console(err);
-    else console.log(d);
-  });
-  var abl = new bmodel(binit);
-  var abl2 = new bmodel(binit2);
-  abl.save(function (err, d) {
-    if (err) console(err);
-    else console.log(d);
-  });
-  abl2.save(function (err, d) {
-    if (err) console(err);
-    else console.log(d);
-  });
-  var as = new asmodel(init);
-  as.save(function (err, d) {
-    if (err) console(err);
-    else console.log(d);
-  });
-
+  await BalanceSheetController.initializeData();
   res.send(true);
 });
 new Schema({

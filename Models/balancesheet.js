@@ -8,7 +8,10 @@ var BalanceSchema = new Schema(
     accNo: {
       type: Number,
     },
-    value: {
+    dvalue: {
+      type: Number,
+    },
+    cvalue: {
       type: Number,
     },
   },
