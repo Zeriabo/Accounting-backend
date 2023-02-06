@@ -22,8 +22,17 @@ class DebitService {
   }
   async save(debit) {
     try {
-      const result = await debitModel.save(debit);
-      return { success: true, body: result };
+      const found = await debitModel.find({ accNo: debit.accNo });
+      if (found) {
+        await debitModel.updateOne(
+          { accNo: debit.accNo },
+          { $inc: { value: debit.value } }
+        );
+      } else {
+        await debitModel.save(debit);
+      }
+
+      return { success: true, body: debit };
     } catch (err) {
       return { success: false, error: err };
     }

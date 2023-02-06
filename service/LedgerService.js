@@ -84,8 +84,8 @@ class LedgerService {
         //   shareholderEquity
         // );
       }
-      //await creditAmount.save();
-      const creditToUpdate = await creditServiceInstance.save(assetDebit);
+      //credit amount save
+      const creditToUpdate = await creditServiceInstance.save(creditModel);
       //await balanceSheet.save();
       const balancesheetToUpdate = await balanceSheetServiceInstance.updateBalanceSheet(
         balanceSheet
