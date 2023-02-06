@@ -22,12 +22,16 @@ class AssetsService {
   }
   async save(asset) {
     try {
-      const found = assetModel.find({ accNo: asset.accNo });
+      const found = await assetModel.find({ accNo: asset.accNo });
+      console.log(found);
       if (!found) {
         const result = await assetModel.save(asset);
         return { success: true, body: result };
       } else {
-        const result = await assetModel.updateOne(asset);
+        const result = await assetModel.updateOne(
+          { accNo: asset.accNo },
+          { $inc: { value: asset.value } }
+        );
         return { success: true, body: result };
       }
     } catch (err) {
