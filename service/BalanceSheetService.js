@@ -1,10 +1,4 @@
 const mongoose = require("mongoose");
-let AssetSchema = require("../Models/asset");
-let LedgerSchema = require("../Models/ledger");
-let ShareholderSchema = require("../Models/ShareholdersEquity");
-let accountSchema = require("../Models/accounts");
-let debitSchema = require("../Models/debit");
-let creditSchema = require("../Models/credit");
 
 var cmodel = mongoose.model("Credit");
 var dmodel = mongoose.model("Debit");
@@ -101,6 +95,46 @@ class BalanceSheetService {
       if (err) console(err);
       else console.log(d);
     });
+  }
+  async updateBalanceSheet(balance) {
+    try {
+      const debitFound = await balance.find({ daccNo: balance.daccNo });
+      const creditFound = await balance.find({ caccNo: balance.caccNo });
+      if (!debitFound && !creditFound) {
+        return balance.save();
+      }
+      //if debit found and credit not
+      // if credit found and debit not
+      //if both not found
+      // if both found
+      if (debitFound && !creditFound) {
+        balance.updateOne(
+          { daccNo: balance.daccNo },
+          { $inc: { dvalue: balance.dvalue } }
+        );
+        let credit = {};
+        credit.caccNo = balance.caccNo;
+        credit.cvalue = balance.cvalue;
+        credit.cname = balance.cname;
+        const result = balance.save(credit);
+        return { success: true, body: result };
+      }
+      if (creditFound && !debitFound) {
+        balance.updateOne(
+          { caccNo: balance.caccNo },
+          { $inc: { cvalue: balance.cvalue } }
+        );
+        return { success: true, body: result };
+      }
+      if (!creditFound && !debitFound) {
+      }
+      if (creditFound && debitFound) {
+      }
+      if (debitFound) {
+      }
+    } catch (err) {
+      return { success: false, error: err };
+    }
   }
 }
 module.exports = BalanceSheetService;

@@ -70,14 +70,12 @@ class LedgerService {
       }
 
       //await assetDebit.save();
-      const assetToUpdate = await assetServiceInstance.save(assetDebit);
+      await assetServiceInstance.save(assetDebit);
       //  await debitAmount.save();
-      const debitToUpdate = await debitServiceInstance.save(debitAmount);
+      await debitServiceInstance.save(debitAmount);
       //await liabilityCredit.save();
       if (liabilityCredit) {
-        const liabilityToUpdate = await liabilityServiceInstance.save(
-          liabilityCredit
-        );
+        await liabilityServiceInstance.save(liabilityCredit);
       }
       if (shareholderEquity) {
         // const liabilityToUpdate = await shareholderEquity.save(
@@ -85,21 +83,11 @@ class LedgerService {
         // );
       }
       //credit amount save
-      const creditToUpdate = await creditServiceInstance.save(creditModel);
-      //await balanceSheet.save();
-      const balancesheetToUpdate = await balanceSheetServiceInstance.updateBalanceSheet(
-        balanceSheet
-      );
+      await creditServiceInstance.save(creditAmount);
 
-      // creditModel.save(function (err) {
-      //   if (err) console(err);
-      // });
-      // debitModel.save(function (err) {
-      //   if (err) console(err);
-      // });
-      // balanceModel.save(function (err) {
-      //   if (err) console(err);
-      // });
+      //Balancesheet save
+      await balanceSheetServiceInstance.updateBalanceSheet(balanceSheet);
+
       ledgerModel.save(function (err) {
         if (err) console(err);
       });

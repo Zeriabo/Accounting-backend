@@ -1,11 +1,17 @@
 const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
-var BalanceSchema = new Schema(
+const balanceSchema = mongoose.Schema;
+var BalanceSchema = new balanceSchema(
   {
-    name: {
+    dname: {
       type: String,
     },
-    accNo: {
+    cname: {
+      type: String,
+    },
+    daccNo: {
+      type: Number,
+    },
+    caccNo: {
       type: Number,
     },
     dvalue: {

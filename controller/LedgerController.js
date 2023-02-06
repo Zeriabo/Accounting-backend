@@ -17,7 +17,6 @@ class LedgerController {
       dvalue: ledger.dvalue,
       cvalue: ledger.cvalue,
     };
-    console.log(doc1);
     const DD = "Debit";
     const CC = "Credit";
     const ma = {};
@@ -31,12 +30,12 @@ class LedgerController {
     da.accNo = doc1.caccNo;
     da.value = doc1.cvalue;
 
-    ba.mname = doc1.debit;
-    ba.dname = doc1.credit;
-    ba.maccNo = doc1.daccNo;
-    ba.daccNo = doc1.caccNo;
-    ba.mvalue = doc1.dvalue;
-    ba.dvalue = doc1.cvalue;
+    ba.dname = doc1.debit;
+    ba.cname = doc1.credit;
+    ba.daccNo = doc1.daccNo;
+    ba.caccNo = doc1.caccNo;
+    ba.dvalue = doc1.dvalue;
+    ba.cvalue = doc1.cvalue;
 
     try {
       //creditModel, debitModel, ledgerModel)
