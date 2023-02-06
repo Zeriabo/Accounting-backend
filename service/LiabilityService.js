@@ -22,8 +22,17 @@ class LiabilitiesService {
   }
   async save(liabilty) {
     try {
-      const result = await liabiltyModel.save(liabilty);
-      return { success: true, body: result };
+      const found = await liabiltyModel.findOne({ accNo: liabilty.accNo });
+      if (!found) {
+        const result = await liabiltyModel.save(liabilty);
+        return { success: true, body: result };
+      } else {
+        const result = await liabiltyModel.updateOne(
+          { accNo: liabilty.accNo },
+          { $inc: { value: liabilty.value } }
+        );
+        return { success: true, body: result };
+      }
     } catch (err) {
       return { success: false, error: err };
     }

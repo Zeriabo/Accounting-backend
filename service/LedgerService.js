@@ -53,7 +53,7 @@ class LedgerService {
       ) {
         var assetDebit = new asset(debitModel);
         var debitAmount = new debit(debitModel);
-        var liabilityCredit = new shareholderEquity(creditModel);
+        var shareholderEquity = new shareholderEquity(creditModel);
         var creditAmount = new credit(creditModel);
         var balanceSheet = new balancesheet(balanceModel);
       } else if (
@@ -74,7 +74,16 @@ class LedgerService {
       //  await debitAmount.save();
       const debitToUpdate = await debitServiceInstance.save(debitAmount);
       //await liabilityCredit.save();
-      const liabilityToUpdate = await liabilityServiceInstance.save(assetDebit);
+      if (liabilityCredit) {
+        const liabilityToUpdate = await liabilityServiceInstance.save(
+          liabilityCredit
+        );
+      }
+      if (shareholderEquity) {
+        // const liabilityToUpdate = await shareholderEquity.save(
+        //   shareholderEquity
+        // );
+      }
       //await creditAmount.save();
       const creditToUpdate = await creditServiceInstance.save(assetDebit);
       //await balanceSheet.save();
