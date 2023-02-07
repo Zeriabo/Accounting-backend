@@ -22,23 +22,16 @@ class CreditService {
   }
   async save(credit) {
     try {
-      try {
-        const found = await creditModel.find({ accNo: credit.accNo });
-        if (found) {
-          const updated = await creditModel.updateOne(
-            { accNo: credit.accNo },
-            { $inc: { value: credit.value } }
-          );
-          console.log(updated);
-        } else {
-          await creditModel.save(credit);
-        }
-
-        return { success: true, body: debit };
-      } catch (err) {
-        return { success: false, error: err };
+      const found = await creditModel.find({ accNo: credit.accNo });
+      if (found) {
+        const updated = await creditModel.updateOne(
+          { accNo: credit.accNo },
+          { $inc: { value: credit.value } }
+        );
+        console.log(updated);
+      } else {
+        await creditModel.save(credit);
       }
-
       return { success: true, body: result };
     } catch (err) {
       return { success: false, error: err };
