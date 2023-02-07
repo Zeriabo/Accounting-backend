@@ -121,11 +121,11 @@ var balanceSchema = new Schema({
 var lemodel = mongoose.model("Ledger", ledgerSchema, "Ledger");
 var asmodel = mongoose.model("Assets", accountSchema, "Assets");
 var limodel = mongoose.model("Liability", accountSchema, "Liabilities");
-var shmodel = mongoose.model(
-  "ShareholderEquity",
-  accountSchema,
-  "ShareholdersEquity"
-);
+// var shmodel = mongoose.model(
+//   "ShareholderEquity",
+//   accountSchema,
+//   "ShareholdersEquity"
+// );
 var cmodel = mongoose.model("Credits", accountSchema, "Credit");
 var dmodel = mongoose.model("Debit", accountSchema, "Debit");
 var bmodel = mongoose.model("Balancesheet", balanceSchema, "Balancesheet");

@@ -10,12 +10,14 @@ const creditService = require("../service/CreditService");
 const liabilityService = require("../service/LiabilityService");
 const debitService = require("../service/debitService");
 const assetService = require("../service/AssetsService");
+const shareHolderEquityService = require("../service/ShareHoldersEquityService");
 
 const balanceSheetServiceInstance = new balanceSheetervice();
 const creditServiceInstance = new creditService();
 const liabilityServiceInstance = new liabilityService();
 const debitServiceInstance = new debitService();
 const assetServiceInstance = new assetService();
+const shareholderEquityInstance = new shareHolderEquityService();
 
 class LedgerService {
   constructor() {}
@@ -78,19 +80,15 @@ class LedgerService {
         await liabilityServiceInstance.save(liabilityCredit);
       }
       if (shareholderEquity) {
-        // const liabilityToUpdate = await shareholderEquity.save(
-        //   shareholderEquity
-        // );
+        await shareholderEquityInstance.save(shareholderEquity);
       }
       //credit amount save
       await creditServiceInstance.save(creditAmount);
 
       //Balancesheet save
-      await balanceSheetServiceInstance.updateBalanceSheet(balanceSheet);
+      await balanceSheetServiceInstance.updateBalanceSheet(balanceSheet); //check
 
-      ledgerModel.save(function (err) {
-        if (err) console(err);
-      });
+      // await ledgerModel.save(ledgerModel);
 
       return { success: true, body: assetToUpdate.success };
     } catch (err) {

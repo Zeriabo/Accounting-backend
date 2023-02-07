@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-var shareholdersEquitySchema = new Schema(
+var shareHoldersEquitySchema = new Schema(
   {
     name: {
       type: String,
@@ -17,8 +17,7 @@ var shareholdersEquitySchema = new Schema(
     collection: "ShareholdersEquity",
   }
 );
-const shareholdersEquity = mongoose.model(
-  "ShareholdersEquity",
-  shareholdersEquitySchema
-);
-module.exports = shareholdersEquity;
+const shareHoldersEq =
+  mongoose.models.ShareholdersEquity ||
+  mongoose.model("ShareholdersEquity", shareHoldersEquitySchema);
+module.exports = shareHoldersEq;

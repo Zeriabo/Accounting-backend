@@ -6,8 +6,6 @@ var asmodel = mongoose.model("Asset");
 var bmodel = mongoose.model("Balancesheet");
 var ledgerModel = mongoose.model("Ledger");
 
-var shmodel = mongoose.model("ShareholdersEquity");
-
 let BalanceSheetModel = require("../Models/balancesheet");
 
 class BalanceSheetService {
@@ -98,16 +96,19 @@ class BalanceSheetService {
   }
   async updateBalanceSheet(balance) {
     try {
-      const debitFound = await balance.find({ daccNo: balance.daccNo });
-      const creditFound = await balance.find({ caccNo: balance.caccNo });
-      if (!debitFound && !creditFound) {
+      const debitFound = await bmodel.find({ daccNo: balance.daccNo });
+      const creditFound = await bmodel.find({ caccNo: balance.caccNo });
+      console.log(debitFound);
+      console.log(balance);
+      console.log(creditFound.length);
+      if (debitFound.length == 0 && creditFound.length == 0) {
         return balance.save();
       }
       //if debit found and credit not
       // if credit found and debit not
       //if both not found
       // if both found
-      if (debitFound && !creditFound) {
+      if (debitFound.length > 0 && creditFound.length == 0) {
         balance.updateOne(
           { daccNo: balance.daccNo },
           { $inc: { dvalue: balance.dvalue } }
@@ -119,16 +120,42 @@ class BalanceSheetService {
         const result = balance.save(credit);
         return { success: true, body: result };
       }
-      if (creditFound && !debitFound) {
+      if (creditFound.length > 0 && debitFound.length == 0) {
         balance.updateOne(
           { caccNo: balance.caccNo },
           { $inc: { cvalue: balance.cvalue } }
         );
         return { success: true, body: result };
       }
-      if (!creditFound && !debitFound) {
+      if (creditFound.length == 0 && debitFound.length == 0) {
       }
-      if (creditFound && debitFound) {
+      if (creditFound.length > 0 && debitFound.length > 0) {
+        const update1 = bmodel.findOneAndUpdate(
+          { caccNo: balance.caccNo },
+          { $inc: { dvalue: balance.dvalue } },
+          function (err, updated) {
+            if (err) {
+              console.log(err);
+              res.json(err);
+            } else {
+              console.log(updated);
+            }
+          }
+        );
+        const update2 = bmodel.findOneAndUpdate(
+          { daccNo: balance.daccNo },
+          { $inc: { cvalue: balance.cvalue } },
+          function (err, updated) {
+            if (err) {
+              console.log(err);
+              res.json(err);
+            } else {
+              console.log(updated);
+            }
+          }
+        );
+        console.log(update1, update2);
+        return { success: true, body: true };
       }
       if (debitFound) {
       }
