@@ -88,9 +88,77 @@ class LedgerService {
       //Balancesheet save
       await balanceSheetServiceInstance.updateBalanceSheet(balanceSheet); //check
 
-      // await ledgerModel.save(ledgerModel);
+      console.log(ledgerModel);
+      await this.updateLedger(ledgerModel);
 
-      return { success: true, body: assetToUpdate.success };
+      return { success: true, body: true };
+    } catch (err) {
+      return { success: false, error: err };
+    }
+  }
+  async updateLedger(ledger) {
+    try {
+      const debitFound = await ledgerModel.find({ daccNo: ledger.daccNo });
+      const creditFound = await ledgerModel.find({ caccNo: ledger.caccNo });
+      console.log(debitFound);
+      console.log(ledger);
+      console.log(creditFound.length);
+      if (debitFound.length == 0 && creditFound.length == 0) {
+        return ledger.save();
+      }
+      //if debit found and credit not
+      // if credit found and debit not
+      //if both not found
+      // if both found
+      if (debitFound.length > 0 && creditFound.length == 0) {
+        ledgerModel.updateOne(
+          { daccNo: ledger.daccNo },
+          { $inc: { dvalue: ledger.dvalue } }
+        );
+        let credit = {};
+        credit.caccNo = ledger.caccNo;
+        credit.cvalue = ledger.cvalue;
+        credit.cname = ledger.cname;
+        const result = ledger.save(credit);
+        return { success: true, body: result };
+      }
+      if (creditFound.length > 0 && debitFound.length == 0) {
+        ledgerModel.updateOne(
+          { caccNo: ledger.caccNo },
+          { $inc: { cvalue: ledger.cvalue } }
+        );
+        return { success: true, body: result };
+      }
+      if (creditFound.length > 0 && debitFound.length > 0) {
+        const update1 = ledgerModel.findOneAndUpdate(
+          { caccNo: ledger.caccNo },
+          { $inc: { dvalue: ledger.dvalue } },
+          function (err, updated) {
+            if (err) {
+              console.log(err);
+              res.json(err);
+            } else {
+              console.log(updated);
+            }
+          }
+        );
+        const update2 = ledgerModel.findOneAndUpdate(
+          { daccNo: ledger.daccNo },
+          { $inc: { cvalue: ledger.cvalue } },
+          function (err, updated) {
+            if (err) {
+              console.log(err);
+              res.json(err);
+            } else {
+              console.log(updated);
+            }
+          }
+        );
+        console.log(update1, update2);
+        return { success: true, body: true };
+      }
+      if (debitFound) {
+      }
     } catch (err) {
       return { success: false, error: err };
     }

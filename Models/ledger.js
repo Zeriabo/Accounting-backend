@@ -3,22 +3,22 @@ const ledgerSchema = mongoose.Schema;
 
 var Ledger = new ledgerSchema(
   {
-    mname: {
-      type: String,
-    },
     dname: {
       type: String,
     },
-    maccNo: {
-      type: Number,
+    cname: {
+      type: String,
     },
     daccNo: {
       type: Number,
     },
-    mvalue: {
+    caccNo: {
       type: Number,
     },
     dvalue: {
+      type: Number,
+    },
+    cvalue: {
       type: Number,
     },
   },

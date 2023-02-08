@@ -2,7 +2,7 @@ const ledgerService = require("../service/LedgerService");
 const ledgerServiceInstance = new ledgerService();
 const AssetService = require("../service/AssetsService");
 const assetServiceInstance = new AssetService();
-
+const Ledger = require("../Models/ledger");
 const AssetController = require("./AssetController");
 
 class LedgerController {
@@ -37,13 +37,14 @@ class LedgerController {
     ba.dvalue = doc1.dvalue;
     ba.cvalue = doc1.cvalue;
 
+    let ledgerdoc = new Ledger(doc1);
     try {
       //creditModel, debitModel, ledgerModel)
       const registered = await ledgerServiceInstance.registerLedger(
         da,
         ma,
         ba,
-        doc1
+        ledgerdoc
       );
 
       if (registered.success) {
