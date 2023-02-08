@@ -88,7 +88,6 @@ class LedgerService {
       //Balancesheet save
       await balanceSheetServiceInstance.updateBalanceSheet(balanceSheet); //check
 
-      console.log(ledgerModel);
       await this.updateLedger(ledgerModel);
 
       return { success: true, body: true };
@@ -100,16 +99,9 @@ class LedgerService {
     try {
       const debitFound = await ledgerModel.find({ daccNo: ledger.daccNo });
       const creditFound = await ledgerModel.find({ caccNo: ledger.caccNo });
-      console.log(debitFound);
-      console.log(ledger);
-      console.log(creditFound.length);
       if (debitFound.length == 0 && creditFound.length == 0) {
         return ledger.save();
       }
-      //if debit found and credit not
-      // if credit found and debit not
-      //if both not found
-      // if both found
       if (debitFound.length > 0 && creditFound.length == 0) {
         ledgerModel.updateOne(
           { daccNo: ledger.daccNo },

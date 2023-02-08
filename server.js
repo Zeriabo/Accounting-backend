@@ -103,12 +103,24 @@ app.post("/intializedata", async function (req, res) {
   await balanceModel.deleteMany({});
   const init = { name: "Bank/Cash at Bank", accNo: 101, value: 1000000 };
   const init2 = { name: "Owner Capital", accNo: 300, value: 1000000 };
-  const init2b = { accNo: 300, mvalue: 0, dvalue: 1000000 };
-  const initb = { accNo: 101, mvalue: 1000000, dvalue: 0 };
+  const init2b = {
+    name: "Owner Capital",
+    accNo: 300,
+    dvalue: 0,
+    cvalue: 1000000,
+    value: 1000000,
+  };
+  const initb = {
+    name: "Bank/Cash at Bank",
+    accNo: 101,
+    dvalue: 1000000,
+    cvalue: 0,
+    value: 1000000,
+  };
+
   var shareholderInit = new shareholderEquity(init2);
   shareholderInit.save(function (err, d) {
     if (err) console(err);
-    else console.log(d);
   });
   var abl = new balanceModel(init2b);
   abl.save(function (err, d) {
@@ -116,17 +128,15 @@ app.post("/intializedata", async function (req, res) {
     else console.log(d);
     // saved!
   });
-  var as = new assetsModel(init);
-  as.save(function (err, d) {
-    if (err) console(err);
-    else console.log(d);
-  });
-
   var ab = new balanceModel(initb);
   ab.save(function (err, d) {
     if (err) console(err);
     else console.log(d);
     // saved!
+  });
+  var as = new assetsModel(init);
+  as.save(function (err, d) {
+    if (err) console(err);
   });
 });
 

@@ -21,6 +21,7 @@ class BalanceSheetService {
               cvalue: "$cvalue",
               name: "$name",
               accNo: "$accNo",
+              value: "$value",
             },
           },
         ],
@@ -66,12 +67,14 @@ class BalanceSheetService {
       accNo: 101,
       dvalue: 1000000,
       cvalue: 0,
+      value: 1000000,
     };
     const binit2 = {
       name: "Owner Capital",
       accNo: 300,
       cvalue: 1000000,
       dvalue: 0,
+      value: 1000000,
     };
     var shareholderInit = new shmodel(init2);
     shareholderInit.save(function (err, d) {
@@ -104,10 +107,6 @@ class BalanceSheetService {
       if (debitFound.length == 0 && creditFound.length == 0) {
         return balance.save();
       }
-      //if debit found and credit not
-      // if credit found and debit not
-      //if both not found
-      // if both found
       if (debitFound.length > 0 && creditFound.length == 0) {
         balance.updateOne(
           { daccNo: balance.daccNo },
