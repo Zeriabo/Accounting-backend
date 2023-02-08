@@ -72,7 +72,7 @@ class LedgerService {
       }
 
       //updating assets
-      await assetServiceInstance.save(assetDebit);
+      await assetServiceInstance.save(assetDebit); //credit check
       //  await debitAmount.save();
       await debitServiceInstance.save(debitAmount); //must add the debit or update
       //await liabilityCredit.save();

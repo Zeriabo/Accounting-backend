@@ -23,13 +23,13 @@ class DebitService {
   async save(debit) {
     try {
       const found = await debitModel.find({ accNo: debit.accNo });
-      if (found) {
+      if (found.length > 0) {
         await debitModel.updateOne(
           { accNo: debit.accNo },
           { $inc: { value: debit.value } }
         );
       } else {
-        await debitModel.save(debit);
+        await debit.save();
       }
 
       return { success: true, body: debit };
