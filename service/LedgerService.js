@@ -71,13 +71,13 @@ class LedgerService {
         var balanceSheet = new balancesheet(balanceModel);
       }
 
-      //await assetDebit.save();
+      //updating assets
       await assetServiceInstance.save(assetDebit);
       //  await debitAmount.save();
-      await debitServiceInstance.save(debitAmount);
+      await debitServiceInstance.save(debitAmount); //must add the debit or update
       //await liabilityCredit.save();
       if (liabilityCredit) {
-        await liabilityServiceInstance.save(liabilityCredit);
+        await liabilityServiceInstance.save(liabilityCredit); //must add the liability or update
       }
       if (shareholderEquity) {
         await shareholderEquityInstance.save(shareholderEquity);
@@ -86,7 +86,7 @@ class LedgerService {
       await creditServiceInstance.save(creditAmount);
 
       //Balancesheet save
-      await balanceSheetServiceInstance.updateBalanceSheet(balanceSheet); //check
+      await balanceSheetServiceInstance.updateBalanceSheet(balanceModel); //check
 
       await this.updateLedger(ledgerModel);
 

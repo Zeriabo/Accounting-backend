@@ -99,8 +99,8 @@ class BalanceSheetService {
   }
   async updateBalanceSheet(balance) {
     try {
-      const debitFound = await bmodel.find({ daccNo: balance.daccNo });
-      const creditFound = await bmodel.find({ caccNo: balance.caccNo });
+      const debitFound = await bmodel.find({ accNo: balance.daccNo });
+      const creditFound = await bmodel.find({ accNo: balance.caccNo });
       console.log(debitFound);
       console.log(balance);
       console.log(creditFound.length);
@@ -109,10 +109,11 @@ class BalanceSheetService {
       }
       if (debitFound.length > 0 && creditFound.length == 0) {
         balance.updateOne(
-          { daccNo: balance.daccNo },
+          { accNo: balance.daccNo },
           { $inc: { dvalue: balance.dvalue } }
         );
         let credit = {};
+        updateBalanceSheet;
         credit.caccNo = balance.caccNo;
         credit.cvalue = balance.cvalue;
         credit.cname = balance.cname;
@@ -121,16 +122,14 @@ class BalanceSheetService {
       }
       if (creditFound.length > 0 && debitFound.length == 0) {
         balance.updateOne(
-          { caccNo: balance.caccNo },
+          { accNo: balance.caccNo },
           { $inc: { cvalue: balance.cvalue } }
         );
         return { success: true, body: result };
       }
-      if (creditFound.length == 0 && debitFound.length == 0) {
-      }
       if (creditFound.length > 0 && debitFound.length > 0) {
         const update1 = bmodel.findOneAndUpdate(
-          { caccNo: balance.caccNo },
+          { accNo: balance.caccNo },
           { $inc: { dvalue: balance.dvalue } },
           function (err, updated) {
             if (err) {
@@ -142,7 +141,7 @@ class BalanceSheetService {
           }
         );
         const update2 = bmodel.findOneAndUpdate(
-          { daccNo: balance.daccNo },
+          { accNo: balance.daccNo },
           { $inc: { cvalue: balance.cvalue } },
           function (err, updated) {
             if (err) {

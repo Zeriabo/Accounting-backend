@@ -24,8 +24,8 @@ class AssetsService {
     try {
       const found = await assetModel.find({ accNo: asset.accNo });
       console.log(found);
-      if (!found) {
-        const result = await assetModel.save(asset);
+      if (found.length == 0) {
+        const result = await asset.save();
         return { success: true, body: result };
       } else {
         const result = await assetModel.updateOne(
