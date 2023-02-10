@@ -113,24 +113,24 @@ class BalanceSheetService {
           { $inc: { dvalue: balance.dvalue } }
         );
         let credit = {};
+        let debit = {};
         updateBalanceSheet;
         credit.caccNo = balance.caccNo;
         credit.cvalue = balance.cvalue;
         credit.cname = balance.cname;
+
+        debit.daccNo = balance.daccNo;
+        debit.cvalue = balance.dvalue;
+        debit.cname = balance.dname;
+        balance.save(debit);
         const result = balance.save(credit);
         return { success: true, body: result };
       }
       if (creditFound.length > 0 && debitFound.length == 0) {
-        balance.updateOne(
-          { accNo: balance.caccNo },
-          { $inc: { cvalue: balance.cvalue } }
-        );
-        return { success: true, body: result };
-      }
-      if (creditFound.length > 0 && debitFound.length > 0) {
         const update1 = bmodel.findOneAndUpdate(
           { accNo: balance.caccNo },
-          { $inc: { dvalue: balance.dvalue } },
+          { $inc: { cvalue: balance.cvalue } },
+          { $inc: { value: -balance.dvalue } },
           function (err, updated) {
             if (err) {
               console.log(err);
@@ -140,9 +140,54 @@ class BalanceSheetService {
             }
           }
         );
+
+        //check credit
+        const creditFound = await bmodel.find({ accNo: balance.caccNo });
+        console.log(creditFound);
+        if (creditFound.value == 0) {
+          await bmodel.deleteOne(
+            { accNo: balance.caccNo },
+            function (err, updated) {
+              if (err) {
+                console.log(err);
+                res.json(err);
+              } else {
+                console.log(updated);
+              }
+            }
+          );
+        }
+        console.log(update1);
+        // balance.save
+        const debitToBeSaved = {
+          name: balance.dname,
+          accNo: balance.daccNo,
+          dvalue: balance.dvalue,
+          cvalue: 0,
+          value: 0,
+        };
+        const newBalanceRecord = new bmodel(debitToBeSaved);
+        newBalanceRecord.save();
+
+        return { success: true, body: result };
+      }
+      if (creditFound.length > 0 && debitFound.length > 0) {
+        const update1 = bmodel.findOneAndUpdate(
+          { accNo: balance.caccNo },
+          { $inc: { cvalue: balance.dvalue } },
+          { $inc: { value: -balance.dvalue } },
+          function (err, updated) {
+            if (err) {
+              console.log(err);
+              res.json(err);
+            } else if (updated) {
+              console.log(updated);
+            }
+          }
+        );
         const update2 = bmodel.findOneAndUpdate(
           { accNo: balance.daccNo },
-          { $inc: { cvalue: balance.cvalue } },
+          { $inc: { dvalue: balance.cvalue } },
           function (err, updated) {
             if (err) {
               console.log(err);
